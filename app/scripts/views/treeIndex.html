@@ -166,42 +166,94 @@
                         <th>单位</th>
                         <th>数量</th>
                     </tr>
-                    <tr>
-                        <td>xxx</td>
-                        <td>yyy</td>
-                        <td>xxx</td>
-                        <td>yyy</td>
-                        <td>xxx</td>
-                        <td>yyy</td>
-                        <td>xxx</td>
-                        <td>yyy</td>
-                        <td>xxx</td>
-                        <td>yyy</td>
-                        <td>xxx</td>
-                        <td>yyy</td>
+                    <tr ng-repeat="it in _ttrl.datas">
+                        <td>{{it.name}}</td>
+                        <td>{{it.id}}</td>
+                        <td>{{it.family}}</td>
+                        <td>{{it.people}}</td>
+                        <td>{{it.rail}}</td>
+                        <td>{{it.type}}</td>
+                        <td>{{it.area}}</td>
+                        <td>{{it.land}}</td>
+                        <td>{{it.nonland}}</td>
+                        <td>{{it.prj}}</td>
+                        <td>{{it.unit}}</td>
+                        <td>{{it.quantity}}</td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td><input type="text"></td>
-                        <td><input type="text"></td>
-                        <!--<td><input type="text"></td>
-                        <td><input type="text"></td>
-                        <td><input type="text"></td>
-                        <td><input type="text"></td>
-                        <td><input type="text"></td>
-                        <td><input type="text"></td>
-                        <td><input type="text"></td>
-                        <td><input type="text"></td>
-                        <td><input type="text"></td>
-                        <td><input type="text"></td>-->
+                        <td><input ng-model="_ttrl.selected.name" type="text" style="width:60px;"></td>
+                        <td><input ng-model="_ttrl.selected.id" type="text" style="width:60px;"></td>
+                        <td><input ng-model="_ttrl.selected.family" type="text" style="width:60px;"></td>
+                        <td><input ng-model="_ttrl.selected.people" type="text" style="width:60px;"></td>
+                        <td><input ng-model="_ttrl.selected.rail" type="text" style="width:60px;"></td>
+                        <td><input ng-model="_ttrl.selected.type" type="text" style="width:60px;"></td>
+                        <td><input ng-model="_ttrl.selected.area" type="text" style="width:60px;"></td>
+                        <td><input ng-model="_ttrl.selected.land" type="text" style="width:60px;"></td>
+                        <td><input ng-model="_ttrl.selected.nonland" type="text" style="width:60px;"></td>
+                        <td><input ng-model="_ttrl.selected.prj" type="text" style="width:60px;"></td>
+                        <td><input ng-model="_ttrl.selected.unit" type="text" style="width:60px;"></td>
+                        <td><input ng-model="_ttrl.selected.quantity" type="text" style="width:60px;"></td>
                     </tr>
                 </table>
-                <md-button class="md-raised md-info">保存数据</md-button>
+                <md-button ng-click="_ttrl.saveData()" class="md-raised md-info">保存数据</md-button>
             </div>
         </div>
         <!--表单2-->
         <div ng-if="_ttrl.tableIndex == '2'">
-            <h2>铁路建设项目（征）用集体土地面积、青苗及附着物补偿清册</h2>
+            <md-input-container style="margin-bottom:0">
+                <label>搜索</label>
+                <input required name="customerName" ng-model="_ttrl.filterText" ng-change="_ttrl.filter()">
+            </md-input-container>
+            <md-list>
+                <md-list-item ng-repeat="it in _ttrl.datas">
+                <md-button ng-click="_ttrl.selectCustomer(it, $index)" ng-class="{'selected' : it === _ctrl.selected }">
+                    {{it.name}}
+                </md-button>
+                </md-list-item>
+            </md-list>
+
+            <h4>铁路建设项目（征）用集体土地面积、青苗及附着物补偿清册</h4>
+            <div>
+                <table border="1" class="table table-striped table-hover">
+                    <tr>
+                        <th colspan="1">铁路里程范围</th>
+                        <th colspan="2">{{_ttrl.selected.rail}}</th>
+                        <th colspan="1">户主姓名</th>
+                        <th colspan="1">{{_ttrl.selected.name}}</th>
+                        <th colspan="2">身份证号码</th>
+                        <th colspan="3">{{_ttrl.selected.id}}</th>
+                    </tr>
+                    <tr>
+                        <th colspan="5">青苗及附着物补偿</th>
+                        <th colspan="5">青苗及附着物补偿</th>
+                    </tr>
+                    <!--<tr>
+                        <th>类别</th>
+                        <th>数量</th>
+                        <th>单位</th>
+                        <th>标准</th>
+                        <th>金额</th>
+                        <th>类别</th>
+                        <th>数量</th>
+                        <th>单位</th>
+                        <th>标准</th>
+                        <th>金额</th>
+                    </tr>
+                     <tr ng-repeat="it in _ttrl.datas">
+                        <td>{{it.prj}}</td>
+                        <td>{{it.unit}}</td>
+                        <td>{{it.quantity}}</td>
+                        <td>{{it.prj}}</td>
+                        <td>{{it.unit}}</td>
+                        <td>{{it.prj}}</td>
+                        <td>{{it.unit}}</td>
+                        <td>{{it.quantity}}</td>
+                        <td>{{it.prj}}</td>
+                        <td>{{it.unit}}</td>    
+                    </tr>-->
+                </table>
+            </div>
         </div>
         <!--表单3-->
         <div ng-if="_ttrl.tableIndex == '3'">
