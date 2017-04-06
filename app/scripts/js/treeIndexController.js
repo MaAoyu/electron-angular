@@ -23,10 +23,17 @@
         self.selectItem = selectItem;
         self.selectTable = selectTable;
         //具体表格参数
-        self.selected = null;
-        self.datas = [];
-        self.saveData = saveData;
-        self.selectCustomer = selectCustomer;
+        self.selected = null;  //表一当前添加数据或表二当前显示数据
+        self.selectedTable3 = null; //表三当前添加数据
+        self.datas = [];       //表一所有数据
+        self.table2Datas = []; //表二所有数据
+        self.filterText = null //表二搜索关键字
+        self.table3Datas = []; //表三所有数据
+        self.saveData = saveData;              //表一保存数据
+        self.selectCustomer = selectCustomer;  //表二点击左侧列表选择户主
+        self.filter = filterCustomer;          //表二搜索
+        self.saveTable3Data = saveTable3Data;  //表三保存数据
+        self.getAllTable3Datas = getAllTable3Datas; //根据户主获取表三数据
 
 
         //Load initial data
@@ -35,23 +42,11 @@
         //----------------------
         // Internal functions 
         //----------------------
-         function selectCustomer(customer, index) {
-            self.selected = angular.isNumber(customer) ? self.customers[customer] : customer;
-            console.log("xx:"+self.selected);
-            console.log("xx:"+self.selected.name);
-        }
 
-        function getAllDatas() {
-            dataService.getDatas().then(function (datas) {
-                self.datas = [].concat(datas);
-                //self.selected = datas[0];
-            });
-        }
-
-        function saveData($event) {
-            console.log("self.selected:"+self.selected);
-            dataService.create(self.selected).then(function (affectedRows) {
-                 console.log("affectedRows:"+affectedRows);
+        //添加表三数据
+        function saveTable3Data($event) {
+            self.selectedTable3.id = self.selected.id;
+            dataService.createTable3(self.selectedTable3).then(function (affectedRows) {
                 $mdDialog.show(
                     $mdDialog
                         .alert()
@@ -62,6 +57,84 @@
                         .targetEvent($event)
                 );
             });
+            self.selectedTable3 = {};
+            getAllTable3Datas();
+        }
+
+         //得到表三全部数据
+        function getAllTable3Datas(customer, index) {
+            self.selected = angular.isNumber(customer) ? self.customers[customer] : customer;
+            dataService.getAllTable3Datas(self.selected.id).then(function (datas) {
+                self.table3Datas = [].concat(datas);
+            });
+        }
+
+        //搜索户主显示表二
+        function filterCustomer() {
+            if (self.filterText == null || self.filterText == "") {
+                getAllDatas();
+            }
+            else {
+                dataService.getNameListByName(self.filterText).then(function (customers) {
+                    self.datas = [].concat(customers);
+                    self.selected = customers[0];
+                });
+                dataService.gettable2Datas(self.selected.id).then(function (datas) {
+                var rawDatas = [].concat(datas);
+                for (var i = 0; i < rawDatas.length; i++) {
+                    if(2*i+1>rawDatas.length)
+                        break;
+
+                    self.table2Datas[i] = rawDatas[2*i];
+                    self.table2Datas[i].prj2 = rawDatas[2*i+1].prj;
+                    self.table2Datas[i].unit2 = rawDatas[2*i+1].unit;
+                    self.table2Datas[i].quantity2 = rawDatas[2*i+1].quantity;
+                }
+            });
+            }
+        }
+
+        //选择一个户主显示表二
+        function selectCustomer(customer, index) {
+            self.selected = angular.isNumber(customer) ? self.customers[customer] : customer;
+            dataService.gettable2Datas(self.selected.id).then(function (datas) {
+                var rawDatas = [].concat(datas);
+                for (var i = 0; i < rawDatas.length; i++) {
+                    if(2*i+1>rawDatas.length)
+                        break;
+
+                    self.table2Datas[i] = rawDatas[2*i];
+                    self.table2Datas[i].prj2 = rawDatas[2*i+1].prj;
+                    self.table2Datas[i].unit2 = rawDatas[2*i+1].unit;
+                    self.table2Datas[i].quantity2 = rawDatas[2*i+1].quantity;
+                }
+            });
+        }
+
+        //得到表一全部数据
+        function getAllDatas() {
+            dataService.getDatas().then(function (datas) {
+                self.datas = [].concat(datas);
+            });
+        }
+
+        //添加表一数据
+        function saveData($event) {
+            console.log("self.selected:" + self.selected);
+            dataService.create(self.selected).then(function (affectedRows) {
+                console.log("affectedRows:" + affectedRows);
+                $mdDialog.show(
+                    $mdDialog
+                        .alert()
+                        .clickOutsideToClose(true)
+                        .title('Success')
+                        .content('Data Added Successfully!')
+                        .ok('Ok')
+                        .targetEvent($event)
+                );
+            });
+            self.selected = {};
+            getAllDatas();
         }
 
 
@@ -104,6 +177,3 @@
     }
 
 })();
-
-//table1
-//name,id,family,people,rail,type,area,land,nonland,prj,unit,quantity
