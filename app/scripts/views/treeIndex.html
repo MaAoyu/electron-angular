@@ -1,0 +1,217 @@
+<div style="width:100%" layout="row">
+<md-sidenav class="site-sidenav md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
+
+    <ul>
+        <li><a ng-click="_ttrl.isShowCity1(0)">内江市</a></li>
+        <div ng-if="_ttrl.citys1[0].flag">
+            <ul>
+                <li><a ng-click="_ttrl.isShowCity2(0)">东兴区</a></li>
+                <div ng-if="_ttrl.citys2[0].flag">
+                    <ul>
+                        <li><a ng-click="_ttrl.isShowCity3(0)">高桥街道办</a></li>
+                        <div ng-if="_ttrl.citys3[0].flag">
+                            <ul>
+                                <li><a ng-click="_ttrl.selectItem('内江市东兴区高桥街道办陡坎村')">陡坎村</a></li>
+                                <li><a ng-click="_ttrl.selectItem('内江市东兴区高桥街道办赛峨村')">赛峨村</a></li>
+                            </ul>
+                        </div>
+                        <li><a ng-click="_ttrl.isShowCity3(1)">郭北镇</a></li>
+                        <div ng-if="_ttrl.citys3[1].flag">
+                            <ul>
+                                <li><a ng-click="_ttrl.selectItem('红岩村')">红岩村</a></li>
+                                <li><a ng-click="_ttrl.selectItem('石锣村')">石锣村</a></li>
+                            </ul>
+                        </div>
+                        <li><a ng-click="_ttrl.isShowCity3(2)">东兴街道</a></li>
+                        <div ng-if="_ttrl.citys3[2].flag">
+                            <ul>
+                                <li><a ng-click="_ttrl.selectItem('红岩村')">新建村</a></li>
+                                <li><a ng-click="_ttrl.selectItem('石锣村')">新民村</a></li>
+                            </ul>
+                        </div>
+                        <li><a ng-click="_ttrl.isShowCity3(3)">胜利街道</a></li>
+                        <div ng-if="_ttrl.citys3[3].flag">
+                            <ul>
+                                <li><a ng-click="_ttrl.selectItem('红岩村')">园艺村</a></li>
+                            </ul>
+                        </div>
+                        <li><a ng-click="_ttrl.isShowCity3(4)">新江街道</a></li>
+                        <div ng-if="_ttrl.citys3[4].flag">
+                            <ul>
+                                <li><a ng-click="_ttrl.selectItem('红岩村')">高寺村</a></li>
+                                <li><a ng-click="_ttrl.selectItem('石锣村')">国光村</a></li>
+                                <li><a ng-click="_ttrl.selectItem('红岩村')">红光村</a></li>
+                                <li><a ng-click="_ttrl.selectItem('石锣村')">九龙村</a></li>
+                            </ul>
+                        </div>
+                    </ul>
+                </div>
+                <li><a ng-click="_ttrl.isShowCity2(1)">市中区</a></li>
+                <div ng-if="_ttrl.citys2[1].flag">
+                    <ul>
+                        <li><a ng-click="_ttrl.isShowCity3(5)">乐贤街道</a></li>
+                        <div ng-if="_ttrl.citys3[5].flag">
+                            <ul>
+                                <li><a ng-click="_ttrl.selectItem('江村')">江村</a></li>
+                                <li><a ng-click="_ttrl.selectItem('红星村')">红星村</a></li>
+                            </ul>
+                        </div>
+                        <li><a ng-click="_ttrl.isShowCity3(6)">白马镇</a></li>
+                        <div ng-if="_ttrl.citys3[6].flag">
+                            <ul>
+                                <li><a ng-click="_ttrl.selectItem('白塔村')">白塔村</a></li>
+                                <li><a ng-click="_ttrl.selectItem('九盘村')">九盘村</a></li>
+                                <li><a ng-click="_ttrl.selectItem('和平村')">和平村</a></li>
+                                <li><a ng-click="_ttrl.selectItem('千子村')">千子村</a></li>
+                            </ul>
+                        </div>
+                        <li><a ng-click="_ttrl.isShowCity3(7)">凤鸣镇</a></li>
+                        <div ng-if="_ttrl.citys3[7].flag">
+                            <ul>
+                                <li><a ng-click="_ttrl.selectItem('江村')">白腊园村</a></li>
+                            </ul>
+                        </div>
+                        <li><a ng-click="_ttrl.isShowCity3(8)">交通镇</a></li>
+                        <div ng-if="_ttrl.citys3[8].flag">
+                            <ul>
+                                <li><a ng-click="_ttrl.selectItem('红星村')">红星村</a></li>
+                                <li><a ng-click="_ttrl.selectItem('同意村')">同意村</a></li>
+                                <li><a ng-click="_ttrl.selectItem('永兴村')">永兴村</a></li>
+                                <li><a ng-click="_ttrl.selectItem('三元村')">三元村</a></li>
+                                <li><a ng-click="_ttrl.selectItem('新光村')">新光村</a></li>
+                            </ul>
+                        </div>
+                        <li><a ng-click="_ttrl.isShowCity3(9)">永安镇</a></li>
+                        <div ng-if="_ttrl.citys3[9].flag">
+                            <ul>
+                                <li><a ng-click="_ttrl.selectItem('江村')">江村</a></li>
+                                <li><a ng-click="_ttrl.selectItem('红星村')">红星村</a></li>
+                            </ul>
+                        </div>
+                        <li><a ng-click="_ttrl.isShowCity3(10)">伏龙镇</a></li>
+                        <div ng-if="_ttrl.citys3[10].flag">
+                            <ul>
+                                <li><a ng-click="_ttrl.selectItem('水口村')">水口村</a></li>
+                                <li><a ng-click="_ttrl.selectItem('新祠堂村')">新祠堂村</a></li>
+                            </ul>
+                        </div>
+                        <li><a ng-click="_ttrl.isShowCity3(11)">凌家镇</a></li>
+                        <div ng-if="_ttrl.citys3[11].flag">
+                            <ul>
+                                <li><a ng-click="_ttrl.selectItem('江村')">柳家嘴村</a></li>
+                            </ul>
+                        </div>
+                    </ul>
+                </div>
+            </ul>
+        </div>
+
+        <li><a ng-click="_ttrl.isShowCity1(1)">自贡市</a></li>
+        <div ng-if="_ttrl.citys1[1].flag">
+            <ul>
+                <li><a>用户管理</a></li>
+                <li><a>日志查看</a></li>
+            </ul>
+        </div>
+
+    </ul>
+</md-sidenav>
+
+<div flex layout="column" tabIndex="-1" role="main" class="md-whiteframe-z2">
+    <h2>{{_ttrl.cityName}}</h2>
+
+    <!--市级表单-->
+    <div ng-if="_ttrl.cityLevel == '1'">
+        aaa
+    </div>
+
+    <!--县级表单-->
+    <div ng-if="_ttrl.cityLevel == '2'">
+        bbb
+    </div>
+
+    <!--镇级表单-->
+    <div ng-if="_ttrl.cityLevel == '3'">
+        ccc
+    </div>
+
+    <!--村级表单-->
+    <div ng-if="_ttrl.cityLevel == '4'">
+        <button ng-click="_ttrl.selectTable('1')" class="btn btn-default" type="submit">表1</button>
+        <button ng-click="_ttrl.selectTable('2')" class="btn btn-default" type="submit">表2</button>
+        <button ng-click="_ttrl.selectTable('3')" class="btn btn-default" type="submit">表3</button>
+        <button ng-click="_ttrl.selectTable('4')" class="btn btn-default" type="submit">表4</button>
+
+        <!--表单1-->
+        <div ng-if="_ttrl.tableIndex == '1'">
+            <h4>铁路建设项目（征）用集体土地面积、青苗及附着物登记清册</h4>
+            <div>
+                <table border="1" class="table table-striped table-hover">
+                    <tr>
+                        <th rowspan="2">姓名</th>
+                        <th rowspan="2">身份证号码</th>
+                        <th rowspan="2">家庭人口</th>
+                        <th rowspan="2">安置人口</th>
+                        <th rowspan="2">铁路里程范围</th>
+                        <th rowspan="2">用地性质</th>
+                        <th colspan="3">用地面积（亩）</th>
+                        <th colspan="3">青苗及附着物补偿</th>
+                        <th rowspan="2">户主签字</th>
+                    </tr>
+                    <tr>
+                        <th>小计</th>
+                        <th>耕地</th>
+                        <th>非耕地</th>
+                        <th>项目</th>
+                        <th>单位</th>
+                        <th>数量</th>
+                    </tr>
+                    <tr>
+                        <td>xxx</td>
+                        <td>yyy</td>
+                        <td>xxx</td>
+                        <td>yyy</td>
+                        <td>xxx</td>
+                        <td>yyy</td>
+                        <td>xxx</td>
+                        <td>yyy</td>
+                        <td>xxx</td>
+                        <td>yyy</td>
+                        <td>xxx</td>
+                        <td>yyy</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <!--<td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>-->
+                    </tr>
+                </table>
+                <md-button class="md-raised md-info">保存数据</md-button>
+            </div>
+        </div>
+        <!--表单2-->
+        <div ng-if="_ttrl.tableIndex == '2'">
+            <h2>铁路建设项目（征）用集体土地面积、青苗及附着物补偿清册</h2>
+        </div>
+        <!--表单3-->
+        <div ng-if="_ttrl.tableIndex == '3'">
+            <h2>铁路建设项目（征）用集体土地面积、青苗及附着物登记清册</h2>
+        </div>
+        <!--表单4-->
+        <div ng-if="_ttrl.tableIndex == '4'">
+            <h2>铁路建设项目（征）用集体土地面积、青苗及附着物登记清册</h2>
+        </div>
+    </div>
+
+</div>
+</div>

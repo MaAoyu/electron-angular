@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+    <title>川南城际铁路拆迁</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <!-- build:css assets/css/app.css -->
+    <link rel="stylesheet" href="../bower_components/angular-material/angular-material.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <!--jquery && bootstrap-->
+    <script src="../bower_components/jquery/dist/jquery.js"></script>  
+    <link href="../bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="data:text/css;charset=utf-8," data-href="../bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" id="bs-theme-stylesheet">
+    <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- endbuild -->
+</head>
+<body>
+    <ng-view></ng-view>
+    <!-- build:js scripts/vendor.js -->
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../bower_components/angular-route/angular-route.js"></script>
+    <script src="../bower_components/angular-animate/angular-animate.js"></script>
+    <script src="../bower_components/angular-aria/angular-aria.js"></script>
+    <script src="../bower_components/angular-material/angular-material.js"></script>
+    <!-- endbuild -->
+    <!-- build:app scripts/app.js -->
+    <script src="./scripts/app.js"></script>
+    <script src="./scripts/customer/customerService.js"></script>
+    <script src="./scripts/customer/customerController.js"></script>
+    <script src="./scripts/js/treeIndexController.js"></script>
+    <script src="./scripts/js/basicTableController.js"></script>
+    <script src="./scripts/js/treeHelper.js"></script>
+    <!-- endbuild -->
+</body>
+</html>
