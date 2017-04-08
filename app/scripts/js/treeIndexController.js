@@ -17,6 +17,10 @@
         self.citys3 = [{ "name": "内江市东兴区高桥街道办", "flag": false }, { "name": "内江市东兴区郭北镇", "flag": false }, { "name": "内江市东兴区东兴街道", "flag": false }, { "name": "内江市东兴区胜利街道", "flag": false },
         { "name": "内江市东兴区新江街道", "flag": false }, { "name": "内江市市中区乐贤街道", "flag": false }, { "name": "内江市市中区白马镇", "flag": false }, { "name": "内江市市中区凤鸣镇", "flag": false },
         { "name": "内江市市中区交通镇", "flag": false }, { "name": "内江市市中区永安镇", "flag": false }, { "name": "内江市市中区伏龙镇", "flag": false }, { "name": "内江市市中区凌家镇", "flag": false }];
+        
+        self.c4CuuList = [];
+        self.c4List = new Array();
+        self.c4List["内江市东兴区高桥街道办"] = ["内江市东兴区高桥街道办陡坎村","内江市东兴区高桥街道办赛峨村"];
         self.isShowCity1 = isShowCity1;
         self.isShowCity2 = isShowCity2;
         self.isShowCity3 = isShowCity3;
@@ -32,6 +36,12 @@
         self.curTable3 = null; //表三当前添加数据
         self.table3Datas = []; //表三所有数据
         self.table4Datas = []; //表四所有数据
+        self.table41Datas = []; //表4-1所有数据
+        self.table42Datas = []; //表4-1所有数据
+        self.table43Datas = []; //表4-1所有数据
+        self.curTable43 = null; //表4-3当前添加数据
+        self.table11Datas = []; //表1-1所有数据
+        self.table12Datas = []; //表1-2所有数据
 
         self.saveTable1Data = saveTable1Data;              //表一保存数据、people表保存数据
         self.showTable2Data = showTable2Data;              //表二点击左侧列表选择户主后显示详细信息
@@ -39,6 +49,8 @@
         self.saveTable3Data = saveTable3Data;              //表三保存数据
         self.getAllTable3Datas = getAllTable3Datas;        //根据户主ID获取表三数据
         self.getAllTable4Datas = getAllTable4Datas;        //根据户主ID获取表四数据
+        self.getAllTable41Datas = getAllTable41Datas;      //根据村名获取4-1数据
+        self.saveTable43Data = saveTable43Data;            //表4-3保存数据
 
 
         //得到初始表一数据
@@ -50,6 +62,75 @@
         // Internal functions 
         //----------------------
 
+        //得到表1-1全部数据
+        function getAllTable12Datas() {
+            // var currC4List = self.c4List[self.cityName];//该镇下所有村的数组
+            // for (var i = 0; i < currC4List.length; i++) {
+            //     dataService.getAllTable3Datas(currC4List[i]).then(function (datas) {
+            //     //TODO:表三增加村字段，再汇总数据
+            //     self.table11Datas.city4 = currC4List[i];
+
+            // });
+            // }
+        }
+
+        //得到表1-1全部数据
+        function getAllTable11Datas() {
+            var currC4List = self.c4List[self.cityName];//该镇下所有村的数组
+            for (var i = 0; i < currC4List.length; i++) {
+                dataService.getAllTable3Datas(currC4List[i]).then(function (datas) {
+                //TODO:表三增加村字段，再汇总数据
+                self.table11Datas.city4 = currC4List[i];
+
+            });
+            }
+        }
+
+        //得到表4-3全部数据
+        function getAllTable43Datas(city2Name) {
+            dataService.getAllTable43Datas(city2Name).then(function (datas) {
+                self.table43Datas = [].concat(datas);
+            });
+        }
+
+        //添加表4-3数据
+        function saveTable43Data($event) {
+            self.curTable43.city = self.cityName;
+            dataService.saveTable43Data(self.curTable43).then(function (affectedRows) {
+                $mdDialog.show(
+                    $mdDialog
+                        .alert()
+                        .clickOutsideToClose(true)
+                        .title('Success')
+                        .content('Data Added Successfully!')
+                        .ok('Ok')
+                        .targetEvent($event)
+                );
+            });
+            self.curTable43 = {};
+            getAllTable43Datas(self.cityName);
+        }
+
+        //得到表4-2全部数据
+        function getAllTable42Datas() {
+            var currC4List = self.c4List[self.cityName];//该镇下所有村的数组
+            for (var i = 0; i < currC4List.length; i++) {
+                dataService.getAllTable41Datas(currC4List[i]).then(function (datas) {
+                self.table41Datas = [].concat(datas);
+                self.table42Datas.name = currC4List[i];
+                //TODO:补偿类别固定则直接从数据库取和
+
+            });
+            }
+        }
+
+        //得到表4-1全部数据
+        function getAllTable41Datas(city4Name) {
+            dataService.getAllTable41Datas(city4Name).then(function (datas) {
+                self.table41Datas = [].concat(datas);
+            });
+        }
+
         //得到表四全部数据
         function getAllTable4Datas(id) {
             getAllTable3Datas(id);  //先取表三原始数据到table3Datas
@@ -60,18 +141,22 @@
                     case "框架结构":
                         table4Datas[i].t1 = table3Datas[i].area;
                         break;
-                    case "框架结构":
+                    case "砖混结构":
                         table4Datas[i].t2 = table3Datas[i].area;
                         break;
-                    case "框架结构":
+                    case "砖木结构":
                         table4Datas[i].t3 = table3Datas[i].area;
                         break;
-                    case "框架结构":
+                    case "土木结构":
                         table4Datas[i].t4 = table3Datas[i].area;
                         break;
                     default:
                         table4Datas[i].t5 = table3Datas[i].area;
                 }
+                table4Datas[i].index2 = table3Datas[i].index;
+                table4Datas[i].arcName = table3Datas[i].prj;
+                table4Datas[i].unit = table3Datas[i].unit;
+                table4Datas[i].quantity = table3Datas[i].quantity;
             }
         }
 
@@ -90,7 +175,7 @@
                         .targetEvent($event)
                 );
             });
-            self.selectedTable3 = {};
+            self.curTable3 = {};
             getAllTable3Datas(self.current.id);
         }
 
@@ -118,6 +203,7 @@
             //直接显示搜索结果第一的具体信息
             showTable2Data(self.current.id);
             getAllTable3Datas(self.current.id);
+            getAllTable4Datas(self.current.id);
         }
 
         //选择一个户主显示表二
@@ -179,6 +265,14 @@
             });
             self.curTable1 = {};
             getAllTable1Datas();
+            //添加4-1表
+            self.curTable41.name = self.curTable1.name;
+            self.curTable41.type = self.curTable1.prj;
+            self.curTable41.unit = self.curTable1.unit;
+            self.curTable41.quantity = self.curTable1.quantity;
+            self.curTable41.city = self.curTable1.city;
+            dataService.addTable41(self.curTable41).then(function (affectedRows) {
+            });
         }
 
 
@@ -207,6 +301,7 @@
             else
                 self.citys3[index].flag = false;
             self.cityName = self.citys3[index].name;
+            self.c4CuuList = self.c4List[self.cityName];
             self.cityLevel = '3';
             //console.log("self.citys3[index].flag:"+self.citys3[index].flag);
         }
@@ -217,6 +312,15 @@
         }
         function selectTable(index) {
             self.tableIndex = index;
+            if(index == 42)
+                getAllTable42Datas();//4-2表数据汇总
+            if(index == 43)
+                getAllTable43Datas(self.cityName);//4-3表数据初始化
+            if(index == 12)
+                getAllTable12Datas();//1-2表数据汇总
+            if(index == 11)
+                getAllTable11Datas();//1-1表数据汇总
+                
         }
     }
 

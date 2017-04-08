@@ -1,7 +1,17 @@
--- //table1
--- //name,id,family,people,rail,type,area,land,nonland,prj,unit,quantity
--- //table3
--- //id,index,length.width,high,area,type1,type2,prj,unit,quantity
+-- table1
+-- name,id,family,people,rail,type,area,land,nonland,prj,unit,quantity
+-- table2
+-- prj,unit,quantity,price,total,prj2,unit2,quantity2,price2,total2
+-- table3
+-- id,index,length.width,high,area,type1,type2,prj,unit,quantity
+-- table4
+-- index,t1,t2,t3,t4,t5,price,total,index2,arcName,unit,price2,quantity,total2,
+-- table41
+-- name,id,type,unit,quantity,price,total,city
+-- table43
+-- name,id,type,unit,quantity,price,total,city
+-- table11
+-- city4,area,familys,t1,t2,t3,t4,total,a1,a2,a3,a4,a5,a6
 
 CREATE TABLE `table_manager`.`table3` (
   `id` INT NOT NULL,

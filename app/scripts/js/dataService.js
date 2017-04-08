@@ -22,8 +22,42 @@
             gettable2Datas: gettable2Datas,
             getNameListByName: getNameListByName,
             createTable3: createTable3,
-            getAllTable3Datas: getAllTable3Datas
+            getAllTable3Datas: getAllTable3Datas,
+            addTable41: addTable41,          //添加表4-1
+            getAllTable41Datas: getAllTable41Datas,
+            saveTable43Data: saveTable43Data,
+            getAllTable43Datas: getAllTable43Datas
         };
+
+        function getAllTable43Datas(c2){
+            var deferred = $q.defer();
+            var query = "SELECT * FROM table43 where city = ?";
+            connection.query(query, [c2], function (err, rows) {
+                if (err) deferred.reject(err);
+                deferred.resolve(rows);
+            });
+            return deferred.promise;
+        }
+
+        function saveTable43Data(data) {
+            var deferred = $q.defer();
+            var query = "INSERT INTO table43 SET ?";
+            connection.query(query, data, function (err, res) {
+                if (err) deferred.reject(err);
+                deferred.resolve(res.insertId);
+            });
+            return deferred.promise;
+        }
+
+        function getAllTable41Datas(c4){
+            var deferred = $q.defer();
+            var query = "SELECT * FROM table41 where city = ?";
+            connection.query(query, [c4], function (err, rows) {
+                if (err) deferred.reject(err);
+                deferred.resolve(rows);
+            });
+            return deferred.promise;
+        }
 
         function getAllTable3Datas(id){
             var deferred = $q.defer();
@@ -99,6 +133,16 @@
         function addTablePeople(data) {
             var deferred = $q.defer();
             var query = "INSERT INTO people SET ?";
+            connection.query(query, data, function (err, res) {
+                if (err) deferred.reject(err);
+                deferred.resolve(res.insertId);
+            });
+            return deferred.promise;
+        }
+        
+        function addTable41(data) {
+            var deferred = $q.defer();
+            var query = "INSERT INTO table41 SET ?";
             connection.query(query, data, function (err, res) {
                 if (err) deferred.reject(err);
                 deferred.resolve(res.insertId);
