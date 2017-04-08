@@ -15,8 +15,10 @@
 
     function DataService($q) {
         return {
-            getDatas: getDatas,
-            create: createData,
+            getDatas: getDatas,             //取表一数据
+            create: createData,             //添加表一
+            addTablePeople: addTablePeople, //添加people表
+            getPeopleList: getPeopleList,   //得到户主列表
             gettable2Datas: gettable2Datas,
             getNameListByName: getNameListByName,
             createTable3: createTable3,
@@ -25,7 +27,7 @@
 
         function getAllTable3Datas(id){
             var deferred = $q.defer();
-            var query = "SELECT * FROM table1 where id = ?";
+            var query = "SELECT * FROM table3 where id = ?";
             connection.query(query, [id], function (err, rows) {
                 if (err) deferred.reject(err);
                 deferred.resolve(rows);
@@ -43,20 +45,31 @@
             return deferred.promise;
         }
 
-        function getNameListByName(name) {
+        function getNameListByName(city,name) {
             var deferred = $q.defer();
-            var query = "SELECT * FROM table1 WHERE name LIKE  '" + name + "%'";
-            connection.query(query, [name], function (err, rows) {
+            var query = "SELECT * FROM table1 WHERE city = ? and name LIKE  '" + name + "%'";
+            connection.query(query, [city], [name], function (err, rows) {
                 if (err) deferred.reject(err);
                 deferred.resolve(rows);
             });
             return deferred.promise;
         }
 
-        function getDatas(){
+
+        function getPeopleList(city){
             var deferred = $q.defer();
-            var query = "SELECT * FROM table1";
-            connection.query(query, function (err, rows) {
+            var query = "SELECT * FROM people where city = ?";
+            connection.query(query, [city], function (err, rows) {
+                if (err) deferred.reject(err);
+                deferred.resolve(rows);
+            });
+            return deferred.promise;
+        }
+
+        function getDatas(city){
+            var deferred = $q.defer();
+            var query = "SELECT * FROM table1 where city = ?";
+            connection.query(query, [city], function (err, rows) {
                 if (err) deferred.reject(err);
                 deferred.resolve(rows);
             });
@@ -82,5 +95,17 @@
             });
             return deferred.promise;
         }
+
+        function addTablePeople(data) {
+            var deferred = $q.defer();
+            var query = "INSERT INTO people SET ?";
+            connection.query(query, data, function (err, res) {
+                if (err) deferred.reject(err);
+                deferred.resolve(res.insertId);
+            });
+            return deferred.promise;
+        }
+
+        
     }
 })();

@@ -23,30 +23,63 @@
         self.selectItem = selectItem;
         self.selectTable = selectTable;
         //具体表格参数
-        self.selected = null;  //表一当前添加数据或表二当前显示数据
-        self.selectedTable3 = null; //表三当前添加数据
-        self.datas = [];       //表一所有数据
+        self.current = null;   //当前户主
+        self.curTable1 = null; //表一当前添加数据
+        self.table1Datas = []; //表一所有数据
+        self.peopleLists = []; //所有户主的列表
         self.table2Datas = []; //表二所有数据
-        self.filterText = null //表二搜索关键字
+        self.filterText = null //搜索关键字
+        self.curTable3 = null; //表三当前添加数据
         self.table3Datas = []; //表三所有数据
-        self.saveData = saveData;              //表一保存数据
-        self.selectCustomer = selectCustomer;  //表二点击左侧列表选择户主
-        self.filter = filterCustomer;          //表二搜索
-        self.saveTable3Data = saveTable3Data;  //表三保存数据
-        self.getAllTable3Datas = getAllTable3Datas; //根据户主获取表三数据
+        self.table4Datas = []; //表四所有数据
+
+        self.saveTable1Data = saveTable1Data;              //表一保存数据、people表保存数据
+        self.showTable2Data = showTable2Data;              //表二点击左侧列表选择户主后显示详细信息
+        self.filter = filterCustomer;                      //表二搜索
+        self.saveTable3Data = saveTable3Data;              //表三保存数据
+        self.getAllTable3Datas = getAllTable3Datas;        //根据户主ID获取表三数据
+        self.getAllTable4Datas = getAllTable4Datas;        //根据户主ID获取表四数据
 
 
-        //Load initial data
-        getAllDatas();
+        //得到初始表一数据
+        getAllTable1Datas();
+        //得到初始户主列表
+        getPeopleList();
 
         //----------------------
         // Internal functions 
         //----------------------
 
+        //得到表四全部数据
+        function getAllTable4Datas(id) {
+            getAllTable3Datas(id);  //先取表三原始数据到table3Datas
+            //转换所需格式数据
+            for (var i = 0; i < table3Datas.length; i++) {
+                table4Datas[i].index = table3Datas[i].index;
+                switch (table3Datas[i].type2) {
+                    case "框架结构":
+                        table4Datas[i].t1 = table3Datas[i].area;
+                        break;
+                    case "框架结构":
+                        table4Datas[i].t2 = table3Datas[i].area;
+                        break;
+                    case "框架结构":
+                        table4Datas[i].t3 = table3Datas[i].area;
+                        break;
+                    case "框架结构":
+                        table4Datas[i].t4 = table3Datas[i].area;
+                        break;
+                    default:
+                        table4Datas[i].t5 = table3Datas[i].area;
+                }
+            }
+        }
+
         //添加表三数据
         function saveTable3Data($event) {
-            self.selectedTable3.id = self.selected.id;
-            dataService.createTable3(self.selectedTable3).then(function (affectedRows) {
+            self.curTable3.id = self.current.id;
+            self.curTable3.city = self.cityName;
+            dataService.createTable3(self.curTable3).then(function (affectedRows) {
                 $mdDialog.show(
                     $mdDialog
                         .alert()
@@ -58,71 +91,75 @@
                 );
             });
             self.selectedTable3 = {};
-            getAllTable3Datas();
+            getAllTable3Datas(self.current.id);
         }
 
-         //得到表三全部数据
-        function getAllTable3Datas(customer, index) {
-            self.selected = angular.isNumber(customer) ? self.customers[customer] : customer;
-            dataService.getAllTable3Datas(self.selected.id).then(function (datas) {
+        //得到表三全部数据
+        function getAllTable3Datas(id) {
+            dataService.gettable2Datas(id).then(function (datas) {
+                self.current = datas[0];
+            });//取表头信息
+            dataService.getAllTable3Datas(id).then(function (datas) {
                 self.table3Datas = [].concat(datas);
-            });
+            });//取表格信息
         }
 
-        //搜索户主显示表二
+        //搜索户主
         function filterCustomer() {
             if (self.filterText == null || self.filterText == "") {
-                getAllDatas();
+                getPeopleList();
             }
             else {
-                dataService.getNameListByName(self.filterText).then(function (customers) {
-                    self.datas = [].concat(customers);
-                    self.selected = customers[0];
+                dataService.getNameListByName(self.cityName, self.filterText).then(function (customers) {
+                    self.peopleLists = [].concat(customers);
+                    self.current = customers[0];
                 });
-                dataService.gettable2Datas(self.selected.id).then(function (datas) {
-                var rawDatas = [].concat(datas);
-                for (var i = 0; i < rawDatas.length; i++) {
-                    if(2*i+1>rawDatas.length)
-                        break;
-
-                    self.table2Datas[i] = rawDatas[2*i];
-                    self.table2Datas[i].prj2 = rawDatas[2*i+1].prj;
-                    self.table2Datas[i].unit2 = rawDatas[2*i+1].unit;
-                    self.table2Datas[i].quantity2 = rawDatas[2*i+1].quantity;
-                }
-            });
             }
+            //直接显示搜索结果第一的具体信息
+            showTable2Data(self.current.id);
+            getAllTable3Datas(self.current.id);
         }
 
         //选择一个户主显示表二
-        function selectCustomer(customer, index) {
-            self.selected = angular.isNumber(customer) ? self.customers[customer] : customer;
-            dataService.gettable2Datas(self.selected.id).then(function (datas) {
+        function showTable2Data(id) {
+            //self.current = angular.isNumber(customer) ? self.peopleLists[customer] : customer;
+            dataService.gettable2Datas(id).then(function (datas) {
+                self.current = datas[0];
+                //表特殊处理
                 var rawDatas = [].concat(datas);
                 for (var i = 0; i < rawDatas.length; i++) {
-                    if(2*i+1>rawDatas.length)
+                    if (2 * i + 1 > rawDatas.length)
                         break;
 
-                    self.table2Datas[i] = rawDatas[2*i];
-                    self.table2Datas[i].prj2 = rawDatas[2*i+1].prj;
-                    self.table2Datas[i].unit2 = rawDatas[2*i+1].unit;
-                    self.table2Datas[i].quantity2 = rawDatas[2*i+1].quantity;
+                    self.table2Datas[i] = rawDatas[2 * i];
+                    self.table2Datas[i].prj2 = rawDatas[2 * i + 1].prj;
+                    self.table2Datas[i].unit2 = rawDatas[2 * i + 1].unit;
+                    self.table2Datas[i].quantity2 = rawDatas[2 * i + 1].quantity;
                 }
             });
         }
 
+        //得到户主列表
+        function getPeopleList() {
+            dataService.getPeopleList(self.cityName).then(function (datas) {
+                self.peopleLists = [].concat(datas);
+            });
+        }
+
+
         //得到表一全部数据
-        function getAllDatas() {
-            dataService.getDatas().then(function (datas) {
-                self.datas = [].concat(datas);
+        function getAllTable1Datas() {
+            dataService.getDatas(self.cityName).then(function (datas) {
+                self.table1Datas = [].concat(datas);
             });
         }
 
         //添加表一数据
-        function saveData($event) {
-            console.log("self.selected:" + self.selected);
-            dataService.create(self.selected).then(function (affectedRows) {
-                console.log("affectedRows:" + affectedRows);
+        function saveTable1Data($event) {
+            self.curTable1.city = self.cityName;
+            //console.log("self.curTable1:" + self.curTable1);
+            dataService.create(self.curTable1).then(function (affectedRows) {
+                //console.log("affectedRows:" + affectedRows);
                 $mdDialog.show(
                     $mdDialog
                         .alert()
@@ -133,8 +170,15 @@
                         .targetEvent($event)
                 );
             });
-            self.selected = {};
-            getAllDatas();
+            //添加用户表，身份证为主键
+            var people = null;
+            people.id = self.curTable1.id;
+            people.name = self.curTable1.name;
+            people.city = self.curTable1.city;
+            dataService.addTablePeople(people).then(function (affectedRows) {
+            });
+            self.curTable1 = {};
+            getAllTable1Datas();
         }
 
 
