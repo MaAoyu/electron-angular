@@ -12,11 +12,15 @@
         self.cityLevel = '1';
         self.tableIndex = '1';
         self.citys1 = [{ "name": "内江市", "flag": false }, { "name": "自贡市", "flag": false }, { "name": "泸州市", "flag": false }];
-        self.citys2 = [{ "name": "内江市东兴区", "flag": false }, { "name": "内江市市中区", "flag": false }, { "name": "大安区", "flag": false }, { "name": "沿滩区", "flag": false },
-        { "name": "富顺县", "flag": false }, { "name": "泸县", "flag": false }, { "name": "龙马潭区", "flag": false }];
+        self.citys2 = [{ "name": "内江市东兴区", "flag": false }, { "name": "内江市市中区", "flag": false }, { "name": "自贡市大安区", "flag": false }, { "name": "自贡市沿滩区", "flag": false },
+        { "name": "自贡市富顺县", "flag": false }, { "name": "泸州市泸县", "flag": false }, { "name": "泸州市龙马潭区", "flag": false }];
         self.citys3 = [{ "name": "内江市东兴区高桥街道办", "flag": false }, { "name": "内江市东兴区郭北镇", "flag": false }, { "name": "内江市东兴区东兴街道", "flag": false }, { "name": "内江市东兴区胜利街道", "flag": false },
         { "name": "内江市东兴区新江街道", "flag": false }, { "name": "内江市市中区乐贤街道", "flag": false }, { "name": "内江市市中区白马镇", "flag": false }, { "name": "内江市市中区凤鸣镇", "flag": false },
-        { "name": "内江市市中区交通镇", "flag": false }, { "name": "内江市市中区永安镇", "flag": false }, { "name": "内江市市中区伏龙镇", "flag": false }, { "name": "内江市市中区凌家镇", "flag": false }];
+        { "name": "内江市市中区交通镇", "flag": false }, { "name": "内江市市中区永安镇", "flag": false }, { "name": "内江市市中区伏龙镇", "flag": false }, { "name": "内江市市中区凌家镇", "flag": false },
+        { "name": "自贡市大安区何市镇", "flag": false }, { "name": "自贡市大安区三多寨镇", "flag": false }, { "name": "自贡市沿滩区仙市镇", "flag": false }, { "name": "自贡市沿滩区瓦市镇", "flag": false },
+        { "name": "自贡市富顺县互助镇", "flag": false }, { "name": "自贡市富顺县富世镇", "flag": false }, { "name": "自贡市富顺县狮市镇", "flag": false }, { "name": "自贡市富顺县东湖镇", "flag": false },
+        { "name": "自贡市富顺县骑龙镇", "flag": false }, { "name": "自贡市富顺县童寺镇", "flag": false }, { "name": "自贡市富顺县古佛镇", "flag": false }, { "name": "自贡市富顺县龙万乡", "flag": false },
+        { "name": "自贡市富顺县代寺镇", "flag": false }, { "name": "自贡市富顺县中石镇", "flag": false }, { "name": "自贡市富顺县", "flag": false }, { "name": "自贡市富顺县", "flag": false }];
         
         self.c4CuuList = [];
         self.c4List = new Array();
@@ -27,6 +31,7 @@
         self.selectItem = selectItem;
         self.selectTable = selectTable;
         //具体表格参数
+        self.paras = {"crop":"0","ss":"0","tree":"0"}; //价格参数
         self.current = null;   //当前户主
         self.curTable1 = null; //表一当前添加数据
         self.table1Datas = []; //表一所有数据
@@ -51,16 +56,28 @@
         self.getAllTable4Datas = getAllTable4Datas;        //根据户主ID获取表四数据
         self.getAllTable41Datas = getAllTable41Datas;      //根据村名获取4-1数据
         self.saveTable43Data = saveTable43Data;            //表4-3保存数据
+        self.changePara = changePara;                      //更改价格参数
 
-
-        //得到初始表一数据
-        getAllTable1Datas();
-        //得到初始户主列表
-        getPeopleList();
+        //得到各参数
+        getAllParas();
 
         //----------------------
         // Internal functions 
         //----------------------
+
+        //更改价格参数
+        function changePara() {
+            //更新参数表
+            dataService.updateParas(self.paras).then(function (datas) {
+            });
+            //更新表二
+            dataService.updateTable2crop(self.paras.crop).then(function (datas) {
+            });
+            dataService.updateTable2ss(self.paras.crop).then(function (datas) {
+            });
+            dataService.updateTable2ss(self.paras.crop).then(function (datas) {
+            });
+        }
 
         //得到表1-1全部数据
         function getAllTable12Datas() {
@@ -181,7 +198,7 @@
 
         //得到表三全部数据
         function getAllTable3Datas(id) {
-            dataService.gettable2Datas(id).then(function (datas) {
+            dataService.getTable1ById(id).then(function (datas) {
                 self.current = datas[0];
             });//取表头信息
             dataService.getAllTable3Datas(id).then(function (datas) {
@@ -195,7 +212,7 @@
                 getPeopleList();
             }
             else {
-                dataService.getNameListByName(self.cityName, self.filterText).then(function (customers) {
+                dataService.getNameListByName(self.cityName,self.filterText).then(function (customers) {
                     self.peopleLists = [].concat(customers);
                     self.current = customers[0];
                 });
@@ -208,9 +225,10 @@
 
         //选择一个户主显示表二
         function showTable2Data(id) {
-            //self.current = angular.isNumber(customer) ? self.peopleLists[customer] : customer;
-            dataService.gettable2Datas(id).then(function (datas) {
+             dataService.getTable1ById(id).then(function (datas) {
                 self.current = datas[0];
+            });//取表头信息
+            dataService.gettable2Datas(id).then(function (datas) {
                 //表特殊处理
                 var rawDatas = [].concat(datas);
                 for (var i = 0; i < rawDatas.length; i++) {
@@ -218,11 +236,14 @@
                         break;
 
                     self.table2Datas[i] = rawDatas[2 * i];
+                    self.table2Datas[i].total = self.table2Datas[i].quantity * self.table2Datas[i].price;
                     self.table2Datas[i].prj2 = rawDatas[2 * i + 1].prj;
                     self.table2Datas[i].unit2 = rawDatas[2 * i + 1].unit;
                     self.table2Datas[i].quantity2 = rawDatas[2 * i + 1].quantity;
+                    self.table2Datas[i].price2 = rawDatas[2 * i + 1].price;
+                    self.table2Datas[i].total2 = self.table2Datas[i].quantity2 * self.table2Datas[i].price2;
                 }
-            });
+            });//表信息
         }
 
         //得到户主列表
@@ -235,8 +256,11 @@
 
         //得到表一全部数据
         function getAllTable1Datas() {
+            console.log("get datas....");
+            console.log(self.cityName);
             dataService.getDatas(self.cityName).then(function (datas) {
                 self.table1Datas = [].concat(datas);
+                console.log("data:"+self.table1Datas[0].name);
             });
         }
 
@@ -256,13 +280,35 @@
                         .targetEvent($event)
                 );
             });
+            
             //添加用户表，身份证为主键
-            var people = null;
+            var people = {"id":"","name":"","city":""};
             people.id = self.curTable1.id;
             people.name = self.curTable1.name;
             people.city = self.curTable1.city;
             dataService.addTablePeople(people).then(function (affectedRows) {
             });
+            
+            //添加相应数据到表二
+            var currTable2 = {};
+            currTable2.id = self.curTable1.id;
+            currTable2.prj = self.curTable1.prj;
+            currTable2.unit = self.curTable1.unit;
+            currTable2.quantity = self.curTable1.quantity;
+            switch (self.curTable1.prj) {
+                    case "农作物":
+                        currTable2.price = self.paras.crop;
+                        break;
+                    case "农用设施":
+                        currTable2.price = self.paras.ss;
+                        break;
+                    default:
+                        currTable2.price = self.paras.tree;
+                }
+            //currTable2.total = currTable2.price * currTable2.quantity;
+            dataService.addTable2(currTable2).then(function (affectedRows) {
+            });
+
             self.curTable1 = {};
             getAllTable1Datas();
             //添加4-1表
@@ -293,7 +339,7 @@
                 self.citys2[index].flag = false;
             self.cityName = self.citys2[index].name;
             self.cityLevel = '2';
-            //console.log("self.citys2[index].flag:"+self.citys2[index].flag);
+            //console.log(self.citys2[index].name+self.citys2[index].flag);
         }
         function isShowCity3(index) {  //第三层展开
             if (self.citys3[index].flag == false)
@@ -306,12 +352,16 @@
             //console.log("self.citys3[index].flag:"+self.citys3[index].flag);
         }
         function selectItem(item) {    //第四层选择
-            //console.log("cityName:" + item);
+            console.log("cityName:" + item);
             self.cityName = item;
             self.cityLevel = '4';
         }
         function selectTable(index) {
             self.tableIndex = index;
+            if(index == 1)
+                getAllTable1Datas();//得到初始表一数据
+            if(index == 2)
+                getPeopleList();
             if(index == 42)
                 getAllTable42Datas();//4-2表数据汇总
             if(index == 43)
@@ -321,6 +371,14 @@
             if(index == 11)
                 getAllTable11Datas();//1-1表数据汇总
                 
+        }
+
+        function getAllParas(){
+            dataService.getAllParas().then(function (datas) {
+                self.paras.crop=datas[0].crop;
+                self.paras.ss=datas[0].ss;
+                self.paras.tree=datas[0].tree;
+            });
         }
     }
 

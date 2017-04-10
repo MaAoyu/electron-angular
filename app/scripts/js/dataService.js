@@ -15,10 +15,17 @@
 
     function DataService($q) {
         return {
+            getAllParas: getAllParas,       //获取参数
+            updateParas: updateParas,       //更新参数
+            updateTable2crop: updateTable2crop,     //更新表二crop价格
+            updateTable2ss: updateTable2ss,         //更新表二ss价格
+            updateTable2tree: updateTable2tree,     //更新表二tree价格
             getDatas: getDatas,             //取表一数据
             create: createData,             //添加表一
             addTablePeople: addTablePeople, //添加people表
+            addTable2: addTable2,
             getPeopleList: getPeopleList,   //得到户主列表
+            getTable1ById: getTable1ById,   
             gettable2Datas: gettable2Datas,
             getNameListByName: getNameListByName,
             createTable3: createTable3,
@@ -28,6 +35,54 @@
             saveTable43Data: saveTable43Data,
             getAllTable43Datas: getAllTable43Datas
         };
+
+        function updateTable2crop(crop) {
+            var deferred = $q.defer();
+            var query = "UPDATE table2 SET price = ? WHERE prj = '农作物'";
+            connection.query(query, [crop], function (err, res) {
+                if (err) deferred.reject(err);
+                deferred.resolve(res);
+            });
+            return deferred.promise;
+        }
+        function updateTable2ss(ss) {
+            var deferred = $q.defer();
+            var query = "UPDATE table2 SET price = ? WHERE prj = '农用设施'";
+            connection.query(query, [ss], function (err, res) {
+                if (err) deferred.reject(err);
+                deferred.resolve(res);
+            });
+            return deferred.promise;
+        }
+        function updateTable2tree(tree) {
+            var deferred = $q.defer();
+            var query = "UPDATE table2 SET price = ? WHERE prj = '树木'";
+            connection.query(query, [tree], function (err, res) {
+                if (err) deferred.reject(err);
+                deferred.resolve(res);
+            });
+            return deferred.promise;
+        }
+
+        function updateParas(paras) {
+            var deferred = $q.defer();
+            var query = "UPDATE para SET ? WHERE id = 1";
+            connection.query(query, paras, function (err, res) {
+                if (err) deferred.reject(err);
+                deferred.resolve(res);
+            });
+            return deferred.promise;
+        }
+
+        function getAllParas(){
+            var deferred = $q.defer();
+            var query = "SELECT * FROM para where id = 1";
+            connection.query(query, function (err, rows) {
+                if (err) deferred.reject(err);
+                deferred.resolve(rows);
+            });
+            return deferred.promise;
+        }
 
         function getAllTable43Datas(c2){
             var deferred = $q.defer();
@@ -82,7 +137,7 @@
         function getNameListByName(city,name) {
             var deferred = $q.defer();
             var query = "SELECT * FROM table1 WHERE city = ? and name LIKE  '" + name + "%'";
-            connection.query(query, [city], [name], function (err, rows) {
+            connection.query(query, [city,name], function (err, rows) {
                 if (err) deferred.reject(err);
                 deferred.resolve(rows);
             });
@@ -109,8 +164,18 @@
             });
             return deferred.promise;
         }
-         
+
         function gettable2Datas(id) {
+            var deferred = $q.defer();
+            var query = "SELECT * FROM table2 where id = ?";
+            connection.query(query, [id], function (err, rows) {
+                if (err) deferred.reject(err);
+                deferred.resolve(rows);
+            });
+            return deferred.promise;
+        }
+         
+        function getTable1ById(id) {
             var deferred = $q.defer();
             var query = "SELECT * FROM table1 where id = ?";
             connection.query(query, [id], function (err, rows) {
@@ -150,6 +215,15 @@
             return deferred.promise;
         }
 
+        function addTable2(data) {
+            var deferred = $q.defer();
+            var query = "INSERT INTO table2 SET ?";
+            connection.query(query, data, function (err, res) {
+                if (err) deferred.reject(err);
+                deferred.resolve(res.insertId);
+            });
+            return deferred.promise;
+        }
         
     }
 })();
