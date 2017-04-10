@@ -29,12 +29,25 @@
             gettable2Datas: gettable2Datas,
             getNameListByName: getNameListByName,
             createTable3: createTable3,
+            createTable4: createTable4,
             getAllTable3Datas: getAllTable3Datas,
+            getAllTable4Datas: getAllTable4Datas,
             addTable41: addTable41,          //添加表4-1
             getAllTable41Datas: getAllTable41Datas,
             saveTable43Data: saveTable43Data,
             getAllTable43Datas: getAllTable43Datas
         };
+
+        //todo
+        function updateTable4(paras) {
+            var deferred = $q.defer();
+            var query = "UPDATE table4 SET price = ? WHERE type1 = '土木'";
+            connection.query(query, [paras.b4], function (err, res) {
+                if (err) deferred.reject(err);
+                deferred.resolve(res);
+            });
+            return deferred.promise;
+        }
 
         function updateTable2crop(crop) {
             var deferred = $q.defer();
@@ -114,12 +127,32 @@
             return deferred.promise;
         }
 
+        function getAllTable4Datas(id){
+            var deferred = $q.defer();
+            var query = "SELECT * FROM table4 where id = ?";
+            connection.query(query, [id], function (err, rows) {
+                if (err) deferred.reject(err);
+                deferred.resolve(rows);
+            });
+            return deferred.promise;
+        }
+
         function getAllTable3Datas(id){
             var deferred = $q.defer();
             var query = "SELECT * FROM table3 where id = ?";
             connection.query(query, [id], function (err, rows) {
                 if (err) deferred.reject(err);
                 deferred.resolve(rows);
+            });
+            return deferred.promise;
+        }
+
+        function createTable4(data) {
+            var deferred = $q.defer();
+            var query = "INSERT INTO table4 SET ?";
+            connection.query(query, data, function (err, res) {
+                if (err) deferred.reject(err);
+                deferred.resolve(res.insertId);
             });
             return deferred.promise;
         }

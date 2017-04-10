@@ -20,7 +20,10 @@
         { "name": "自贡市大安区何市镇", "flag": false }, { "name": "自贡市大安区三多寨镇", "flag": false }, { "name": "自贡市沿滩区仙市镇", "flag": false }, { "name": "自贡市沿滩区瓦市镇", "flag": false },
         { "name": "自贡市富顺县互助镇", "flag": false }, { "name": "自贡市富顺县富世镇", "flag": false }, { "name": "自贡市富顺县狮市镇", "flag": false }, { "name": "自贡市富顺县东湖镇", "flag": false },
         { "name": "自贡市富顺县骑龙镇", "flag": false }, { "name": "自贡市富顺县童寺镇", "flag": false }, { "name": "自贡市富顺县古佛镇", "flag": false }, { "name": "自贡市富顺县龙万乡", "flag": false },
-        { "name": "自贡市富顺县代寺镇", "flag": false }, { "name": "自贡市富顺县中石镇", "flag": false }, { "name": "自贡市富顺县", "flag": false }, { "name": "自贡市富顺县", "flag": false }];
+        { "name": "自贡市富顺县代寺镇", "flag": false }, { "name": "自贡市富顺县中石镇", "flag": false }, 
+        { "name": "泸州市泸县玉蝉街道办事处", "flag": false }, { "name": "泸州市泸县福集镇", "flag": false },{ "name": "泸州市泸县富集镇", "flag": false }, { "name": "泸州市泸县牛滩镇", "flag": false },
+        { "name": "泸州市泸县德胜镇", "flag": false }, { "name": "泸州市龙马潭区双加镇", "flag": false },{ "name": "泸州市龙马潭区石洞镇", "flag": false }, { "name": "泸州市龙马潭区鱼塘镇", "flag": false },
+        { "name": "泸州市龙马潭区安宁镇", "flag": false }];
         
         self.c4CuuList = [];
         self.c4List = new Array();
@@ -31,7 +34,8 @@
         self.selectItem = selectItem;
         self.selectTable = selectTable;
         //具体表格参数
-        self.paras = {"crop":"0","ss":"0","tree":"0"}; //价格参数
+        self.paras = {"crop":"0","ss":"0","tree":"0","b1":"0","b2":"0","b3":"0",
+                    "b4":"0","b5":"0","a1":"0","a2":"0"}; //价格参数
         self.current = null;   //当前户主
         self.curTable1 = null; //表一当前添加数据
         self.table1Datas = []; //表一所有数据
@@ -77,6 +81,10 @@
             });
             dataService.updateTable2ss(self.paras.crop).then(function (datas) {
             });
+            //更新表四
+            dataService.updateTable4(self.paras).then(function (datas) {
+            });
+
         }
 
         //得到表1-1全部数据
@@ -150,37 +158,22 @@
 
         //得到表四全部数据
         function getAllTable4Datas(id) {
-            getAllTable3Datas(id);  //先取表三原始数据到table3Datas
-            //转换所需格式数据
-            for (var i = 0; i < table3Datas.length; i++) {
-                table4Datas[i].index = table3Datas[i].index;
-                switch (table3Datas[i].type2) {
-                    case "框架结构":
-                        table4Datas[i].t1 = table3Datas[i].area;
-                        break;
-                    case "砖混结构":
-                        table4Datas[i].t2 = table3Datas[i].area;
-                        break;
-                    case "砖木结构":
-                        table4Datas[i].t3 = table3Datas[i].area;
-                        break;
-                    case "土木结构":
-                        table4Datas[i].t4 = table3Datas[i].area;
-                        break;
-                    default:
-                        table4Datas[i].t5 = table3Datas[i].area;
-                }
-                table4Datas[i].index2 = table3Datas[i].index;
-                table4Datas[i].arcName = table3Datas[i].prj;
-                table4Datas[i].unit = table3Datas[i].unit;
-                table4Datas[i].quantity = table3Datas[i].quantity;
-            }
+           dataService.getAllTable4Datas(id).then(function (datas) {
+                 var rawT4Datas = [].concat(datas);
+                 for (var i = 0; i < rawT4Datas.length; i++) {
+                    self.table4Datas[i] = rawT4Datas[i]; 
+                    self.table4Datas[i].total = self.table4Datas[i].area1 * self.table4Datas[i].price;
+                    self.table4Datas[i].total2 = self.table4Datas[i].quantity * self.table4Datas[i].price2;
+                };
+            });
+           
         }
 
         //添加表三数据
         function saveTable3Data($event) {
             self.curTable3.id = self.current.id;
             self.curTable3.city = self.cityName;
+            //console.log(self.curTable3.city);
             dataService.createTable3(self.curTable3).then(function (affectedRows) {
                 $mdDialog.show(
                     $mdDialog
@@ -192,6 +185,46 @@
                         .targetEvent($event)
                 );
             });
+            //相应添加到表四
+            var currTable4 = {};
+            currTable4.id = self.curTable3.id;
+            currTable4.index = self.curTable3.index;
+            currTable4.type1 = self.curTable3.type2;
+            currTable4.area1 = self.curTable3.area;
+            switch (self.curTable3.type2) {
+                    case "框架":
+                        currTable4.t1 = self.curTable3.area;
+                        currTable4.price = self.paras.b1;
+                        break;
+                    case "砖混":
+                        currTable4.t2 = self.curTable3.area;
+                        currTable4.price = self.paras.b2;
+                        break;
+                    case "砖木":
+                        currTable4.t3 = self.curTable3.area;
+                        currTable4.price = self.paras.b3;
+                        break;
+                    case "土木":
+                        currTable4.t4 = self.curTable3.area;
+                        currTable4.price = self.paras.b4;
+                        break;
+                    default:
+                        currTable4.t5 = self.paras.tree;
+                        currTable4.price = self.paras.b5;
+                }
+            switch (self.curTable3.prj) {
+                    case "院坝":
+                        currTable4.price2 = self.paras.a1;
+                        break;
+                    default:
+                        currTable4.price2 = self.paras.a2;
+                }
+            currTable4.arcName = self.curTable3.prj;
+            currTable4.unit = self.curTable3.unit;
+            currTable4.quantity = self.curTable3.quantity;
+            dataService.createTable4(currTable4).then(function (affectedRows) {
+            });
+
             self.curTable3 = {};
             getAllTable3Datas(self.current.id);
         }
@@ -378,6 +411,13 @@
                 self.paras.crop=datas[0].crop;
                 self.paras.ss=datas[0].ss;
                 self.paras.tree=datas[0].tree;
+                self.paras.b1=datas[0].b1;
+                self.paras.b2=datas[0].b2;
+                self.paras.b3=datas[0].b3;
+                self.paras.b4=datas[0].b4;
+                self.paras.b5=datas[0].b5;
+                self.paras.a1=datas[0].a1;
+                self.paras.a2=datas[0].a2;
             });
         }
     }
