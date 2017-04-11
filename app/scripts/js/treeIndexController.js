@@ -61,6 +61,8 @@
         self.getAllTable41Datas = getAllTable41Datas;      //根据村名获取4-1数据
         self.saveTable43Data = saveTable43Data;            //表4-3保存数据
         self.changePara = changePara;                      //更改价格参数
+        self.search = search;                              //点击搜索结果
+        self.changePrice = changePrice;                    //更改价格
 
         //得到各参数
         getAllParas();
@@ -70,6 +72,11 @@
         //----------------------
 
         //更改价格参数
+        function changePrice(){
+            self.cityLevel = '0';
+            
+        }
+
         function changePara() {
             //更新参数表
             dataService.updateParas(self.paras).then(function (datas) {
@@ -404,6 +411,23 @@
             if(index == 11)
                 getAllTable11Datas();//1-1表数据汇总
                 
+        }
+
+        function search(id) {
+            console.log(self.tableIndex);
+            switch (self.tableIndex) {
+                    case '2':
+                        showTable2Data(id);
+                        break;
+                    case '3':
+                        getAllTable3Datas(id);
+                        break;
+                    case '4':
+                        getAllTable4Datas(id);
+                        break;
+                    default:
+                        console.log("no datas..");
+                }
         }
 
         function getAllParas(){
