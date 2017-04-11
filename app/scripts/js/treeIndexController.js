@@ -51,6 +51,9 @@
         self.curTable43 = null; //表4-3当前添加数据
         self.table11Datas = []; //表1-1所有数据
         self.table12Datas = []; //表1-2所有数据
+        self.buildingNames = ["框架", "砖混", "砖木", "土木", "简易", "其它"];
+        self.Table2Type = [];   //记录表二价格标准
+        self.searchName = null;
 
         self.saveTable1Data = saveTable1Data;              //表一保存数据、people表保存数据
         self.showTable2Data = showTable2Data;              //表二点击左侧列表选择户主后显示详细信息
@@ -63,6 +66,11 @@
         self.changePara = changePara;                      //更改价格参数
         self.search = search;                              //点击搜索结果
         self.changePrice = changePrice;                    //更改价格
+        self.getTable1ByPK = getTable1ByPK;
+        self.getTable3ByPK = getTable3ByPK;
+        self.getTable4ByPK = getTable4ByPK;
+        self.deleteTable1 = deleteTable1;    
+        self.updateTable2 = updateTable2;                   //更改表二价格标准             
 
         //得到各参数
         getAllParas();
@@ -71,10 +79,51 @@
         // Internal functions 
         //----------------------
 
+        function updateTable2(){
+            for (var i = 0; i < self.table2Datas.length; i++) {
+                self.table2Datas[i].price = self.Table2Type[i].type1;
+                self.table2Datas[i].price2 = self.Table2Type[i].type2;
+                self.table2Datas[i].total = self.table2Datas[i].quantity * self.table2Datas[i].price;
+                self.table2Datas[i].total2 = self.table2Datas[i].quantity2 * self.table2Datas[i].price2;
+                //更新数据库
+            }
+
+        }
+
+        function deleteTable1(pk){
+
+        }
+        
+        function getTable1ByPK(pk) {
+            dataService.getTable1ByPK(pk).then(function (datas) {
+                var rawDatas = [].concat(datas);
+                self.curTable1 = rawDatas[0];
+                //console.log(self.curTable1.name);
+            });
+        }
+
+        function getTable3ByPK(pk) {
+            console.log(pk);
+            dataService.getTable3ByPK(pk).then(function (datas) {
+                var rawDatas = [].concat(datas);
+                self.curTable3 = rawDatas[0];
+                console.log(self.curTable3.id);
+            });
+        }
+
+        function getTable4ByPK(pk) {
+            console.log(pk);
+            dataService.getTable4ByPK(pk).then(function (datas) {
+                var rawDatas = [].concat(datas);
+                self.curTable4 = rawDatas[0];
+                console.log(self.curTable4s.id);
+            });
+        }
+
         //更改价格参数
         function changePrice(){
             self.cityLevel = '0';
-            
+
         }
 
         function changePara() {
@@ -306,7 +355,21 @@
 
         //添加表一数据
         function saveTable1Data($event) {
-            self.curTable1.city = self.cityName;
+            if(self.curTable1 != null && self.curTable1.autoID != null){
+                dataService.updateTable1(self.curTable1).then(function (affectedRows) {
+                    $mdDialog.show(
+                        $mdDialog
+                            .alert()
+                            .clickOutsideToClose(true)
+                            .title('Success')
+                            .content('Data Updated Successfully!')
+                            .ok('Ok')
+                            .targetEvent($event)
+                    );
+                });
+            }
+            else{
+                 self.curTable1.city = self.cityName;
             //console.log("self.curTable1:" + self.curTable1);
             dataService.create(self.curTable1).then(function (affectedRows) {
                 //console.log("affectedRows:" + affectedRows);
@@ -359,6 +422,8 @@
             self.curTable41.city = self.curTable1.city;
             dataService.addTable41(self.curTable41).then(function (affectedRows) {
             });
+            }
+           
         }
 
 
@@ -413,17 +478,25 @@
                 
         }
 
-        function search(id) {
-            console.log(self.tableIndex);
+        function search() {
+            console.log(self.searchName.id);
+            // var searchID = null;
+            // dataService.getPeopleByName(self.searchName.name).then(function (datas) {
+            //     var rawDatas = [].concat(datas);
+            //     console.log(rawDatas.length);
+            //     searchID = rawDatas[0].id;
+            //     console.log(self.searchName);
+            //     //console.log("data:"+self.table1Datas[0].name);
+            // });
             switch (self.tableIndex) {
                     case '2':
-                        showTable2Data(id);
+                        showTable2Data(self.searchName.id);
                         break;
                     case '3':
-                        getAllTable3Datas(id);
+                        getAllTable3Datas(self.searchName.id);
                         break;
                     case '4':
-                        getAllTable4Datas(id);
+                        getAllTable4Datas(self.searchName.id);
                         break;
                     default:
                         console.log("no datas..");

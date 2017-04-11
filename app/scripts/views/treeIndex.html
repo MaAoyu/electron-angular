@@ -324,19 +324,27 @@
         </ul>
 
         <div>
-            <button ng-click="_ttrl.changePrice()" class="btn btn-primary btn-large">  
+            <!--<button ng-click="_ttrl.changePrice()" class="btn btn-primary btn-large">  
                  更改价格  
-            </button>
-            </br>
-            <label>搜索</label>
+            </button>-->
+            <!--<label>搜索户主</label>
             <input required ng-model="_ttrl.filterText" ng-change="_ttrl.filter()">
-            <md-list>
+            </br>
+            <label>选择户主</label>
+            <select style="width:60px;" ng-init="_ttrl.searchName = _ttrl.peopleLists[0].name" ng-model="_ttrl.searchName" ng-options="x.name for x in _ttrl.peopleLists">
+            </select>
+            <button ng-click="_ttrl.search()" class="btn btn-primary btn-middle">  
+                 确认  
+            </button>-->
+
+
+            <!--<md-list>
                 <md-list-item ng-repeat="people in _ttrl.peopleLists">
                     <md-button ng-click="_ttrl.search(people.id)">
                         {{people.name}}
                     </md-button>
                 </md-list-item>
-            </md-list>
+            </md-list>-->
         </div>
 
     </md-sidenav>
@@ -1073,6 +1081,17 @@
                 <button ng-click="_ttrl.selectTable('3')" class="btn btn-default" type="submit">表3</button>
                 <button ng-click="_ttrl.selectTable('4')" class="btn btn-default" type="submit">表4</button>
             </div>
+            <div align="right">
+                <label>搜索户主</label>
+                <input required ng-model="_ttrl.filterText" ng-change="_ttrl.filter()">
+                </br>
+                <label>选择户主</label>
+                <select style="width:60px;" ng-init="_ttrl.searchName = _ttrl.peopleLists[0].name" ng-model="_ttrl.searchName" ng-options="x.name for x in _ttrl.peopleLists">
+            </select>
+                <button ng-click="_ttrl.search()" class="btn btn-primary btn-middle">  
+                 确认  
+            </button>
+            </div>
 
             <!--表单1-->
             <div ng-if="_ttrl.tableIndex == '1'">
@@ -1090,7 +1109,7 @@
                 </div>
 
                 <div>
-                    <table border="1" cellpadding="1" class="table table-striped table-hover">
+                    <table border="1" cellpadding="0" class="table table-striped table-hover">
                         <tr>
                             <th rowspan="2">姓名</th>
                             <th rowspan="2">身份证号码</th>
@@ -1101,7 +1120,8 @@
                             <th colspan="3">用地面积（亩）</th>
                             <th colspan="3">青苗及附着物补偿</th>
                             <th rowspan="2">户主签字</th>
-                            <th rowspan="2">操作</th>
+                            <th rowspan="2">编辑</th>
+                            <th rowspan="2">删除</th>
                         </tr>
                         <tr>
                             <th>小计</th>
@@ -1126,7 +1146,10 @@
                             <td>{{t1.quantity}}</td>
                             <td></td>
                             <td>
-                                <md-button ng-click="_ttrl.saveTable1Data()" class="md-raised md-info">编辑</md-button>
+                                <button ng-click="_ttrl.getTable1ByPK(t1.autoID)" class="btn btn-primary btn-small">编辑</button>
+                            </td>
+                            <td>
+                                <button ng-click="_ttrl.deleteTable1(t1.autoID)" class="btn btn-danger btn-middle">删除</button>
                             </td>
                         </tr>
                         <tr>
@@ -1143,12 +1166,16 @@
                             <td></td>
                             <td></td>
                             <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                             <th colspan="15">正在添加/编辑的数据：</th>
                         </tr>
                         <tr>
                             <td>
-                                <input ng-model="_ttrl.curTable1.name" type="text" style="width:50px;"></td>
+                                <input value="_ttrl.curTable1.name" ng-model="_ttrl.curTable1.name" type="text" style="width:50px;"></td>
                             <td>
-                                <input ng-model="_ttrl.curTable1.id" type="text" style="width:70px;"></td>
+                                <input value="_ttrl.curTable1.id" ng-model="_ttrl.curTable1.id" type="text" style="width:70px;"></td>
                             <td>
                                 <input ng-model="_ttrl.curTable1.family" type="text" style="width:30px;"></td>
                             <td>
@@ -1169,6 +1196,7 @@
                                 <input ng-model="_ttrl.curTable1.unit" type="text" style="width:40px;"></td>
                             <td>
                                 <input ng-model="_ttrl.curTable1.quantity" type="text" style="width:30px;"></td>
+                            <td></td>
                             <td></td>
                             <td></td>
                         </tr>
@@ -1223,7 +1251,8 @@
                             <th colspan="2">身份证号码</th>
                             <th colspan="3">{{_ttrl.current.id}}</th>
                             <th rowspan="3">户主签名</th>
-                            <th rowspan="3">操作</th>
+                            <th rowspan="3">标准一</th>
+                            <th rowspan="3">标准二</th>
                         </tr>
                         <tr>
                             <th colspan="5">青苗及附着物补偿</th>
@@ -1254,7 +1283,10 @@
                             <td>{{t2.total2}}</td>
                             <td></td>
                             <td>
-                                <md-button ng-click="_ttrl.saveTable1Data()" class="md-raised md-info">编辑</md-button>
+                                <input ng-model="_ttrl.Table2Type[$index].type1" type="text" style="width:50px;">
+                            </td>
+                            <td>
+                                <input ng-model="_ttrl.Table2Type[$index].type2" type="text" style="width:50px;">
                             </td>
                         </tr>
                         <tr>
@@ -1275,6 +1307,7 @@
                             <th colspan="12"> 应补偿金额合计：（小写） （大写）</th>
                         </tr>
                     </table>
+                    <button ng-click="_ttrl.updateTable2()" class="btn btn-primary btn-middle">保存设置</button>
                     <div style="float: right">
                         <md-button ng-click="" class="md-raised md-info">首页</md-button>
                         <md-button ng-click="" class="md-raised md-info">上一页</md-button>
@@ -1324,7 +1357,8 @@
                             <th colspan="2">家庭人口</th>
                             <th colspan="1">{{_ttrl.current.family}}</th>
                             <th rowspan="3">户主签名</th>
-                            <th rowspan="3">操作</th>
+                            <th rowspan="3">编辑</th>
+                            <th rowspan="3">删除</th>
                         </tr>
                         <tr>
                             <th colspan="7">拆迁房屋</th>
@@ -1355,8 +1389,14 @@
                             <td>{{t3.quantity}}</td>
                             <td></td>
                             <td>
-                                <md-button ng-click="_ttrl.saveTable1Data()" class="md-raised md-info">编辑</md-button>
+                                <button ng-click="_ttrl.getTable3ByPK(t3.autoID)" class="btn btn-primary btn-small">编辑</button>
                             </td>
+                            <td>
+                                <button ng-click="_ttrl.deleteTable3(t3.autoID)" class="btn btn-danger btn-middle">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                             <th colspan="13">正在添加/编辑的数据：</th>
                         </tr>
                         <tr>
                             <td>
@@ -1372,13 +1412,17 @@
                             <td>
                                 <input ng-model="_ttrl.curTable3.type1" type="text" style="width:60px;"></td>
                             <td>
-                                <input ng-model="_ttrl.curTable3.type2" type="text" style="width:60px;"></td>
+                                <select ng-init="_ttrl.curTable3.type2 = _ttrl.buildingNames[0]" ng-model="_ttrl.curTable3.type2" ng-options="x for x in _ttrl.buildingNames">
+                                </select></td>
                             <td>
                                 <input ng-model="_ttrl.curTable3.prj" type="text" style="width:60px;"></td>
                             <td>
                                 <input ng-model="_ttrl.curTable3.unit" type="text" style="width:60px;"></td>
                             <td>
                                 <input ng-model="_ttrl.curTable3.quantity" type="text" style="width:60px;"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                     </table>
                     <md-button ng-click="_ttrl.saveTable3Data()" class="md-raised md-info">保存数据</md-button>
@@ -1477,6 +1521,20 @@
                             <td>{{t4.price2}}</td>
                             <td>{{t4.quantity}}</td>
                             <td>{{t4.total2}}</td>
+                            <td>{{t4.o1}}</td>
+                            <td>{{t4.o1}}</td>
+                            <td>{{t4.o1}}</td>
+                            <td>{{t4.o1}}</td>
+                            <td>{{t4.o1}}</td>
+                            <td></td>
+                            <td>
+                                 <button ng-click="_ttrl.getTable4ByPK(t4.autoID)" class="btn btn-primary btn-middle">编辑</button>
+                            </td>
+                        </tr>
+                        <tr>
+                             <th colspan="21">正在编辑的数据：</th>
+                        </tr>
+                        <tr>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -1484,10 +1542,31 @@
                             <td></td>
                             <td></td>
                             <td>
-                                <md-button ng-click="_ttrl.saveTable1Data()" class="md-raised md-info">编辑</md-button>
-                            </td>
+                                <input ng-model="_ttrl.curTable4.price" type="text" style="width:60px;"></td>
+                             <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <input ng-model="_ttrl.curTable4.price2" type="text" style="width:30px;"></td>
+                             <td></td>
+                            <td></td>
+                            <td>
+                                <input ng-model="_ttrl.curTable4.o1" type="text" style="width:30px;"></td>
+                            <td>
+                                <input ng-model="_ttrl.curTable4.o2" type="text" style="width:60px;"></td>
+                            <td>
+                                <input ng-model="_ttrl.curTable4.o3" type="text" style="width:60px;"></td>
+                            <td>
+                                <input ng-model="_ttrl.curTable4.o4" type="text" style="width:60px;"></td>
+                            <td>
+                                <input ng-model="_ttrl.curTable4.o5" type="text" style="width:60px;"></td>
+                            <td></td>
+                            <td></td>
+                            
                         </tr>
                     </table>
+                    <md-button ng-click="" class="md-raised md-info">保存修改</md-button>
                     <div style="float: right">
                         <md-button ng-click="" class="md-raised md-info">首页</md-button>
                         <md-button ng-click="" class="md-raised md-info">上一页</md-button>

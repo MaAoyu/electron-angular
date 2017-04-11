@@ -35,7 +35,12 @@
             addTable41: addTable41,          //添加表4-1
             getAllTable41Datas: getAllTable41Datas,
             saveTable43Data: saveTable43Data,
-            getAllTable43Datas: getAllTable43Datas
+            getAllTable43Datas: getAllTable43Datas,
+            getTable1ByPK: getTable1ByPK,
+            getTable3ByPK: getTable3ByPK,
+            getTable4ByPK: getTable4ByPK,
+            updateTable1: updateTable1,
+            getPeopleByName: getPeopleByName
         };
 
         //todo
@@ -86,11 +91,61 @@
             });
             return deferred.promise;
         }
+        
+        function updateTable1(data1) {
+            var deferred = $q.defer();
+            var query = "UPDATE table1 SET name = ? WHERE autoID = ?";
+            connection.query(query, [data1.name, data1.autoID], function (err, res) {
+                if (err) deferred.reject(err);
+                deferred.resolve(res);
+            });
+            return deferred.promise;
+        }
 
         function getAllParas(){
             var deferred = $q.defer();
             var query = "SELECT * FROM para where id = 1";
             connection.query(query, function (err, rows) {
+                if (err) deferred.reject(err);
+                deferred.resolve(rows);
+            });
+            return deferred.promise;
+        }
+        
+        function getTable1ByPK(pk){
+            var deferred = $q.defer();
+            var query = "SELECT * FROM table1 where autoID = ?";
+            connection.query(query, [pk], function (err, rows) {
+                if (err) deferred.reject(err);
+                deferred.resolve(rows);
+            });
+            return deferred.promise;
+        }
+
+        function getTable3ByPK(pk){
+            var deferred = $q.defer();
+            var query = "SELECT * FROM table3 where autoID = ?";
+            connection.query(query, [pk], function (err, rows) {
+                if (err) deferred.reject(err);
+                deferred.resolve(rows);
+            });
+            return deferred.promise;
+        }
+
+        function getTable4ByPK(pk){
+            var deferred = $q.defer();
+            var query = "SELECT * FROM table4 where autoID = ?";
+            connection.query(query, [pk], function (err, rows) {
+                if (err) deferred.reject(err);
+                deferred.resolve(rows);
+            });
+            return deferred.promise;
+        }
+        
+        function getPeopleByName(name){
+            var deferred = $q.defer();
+            var query = "SELECT * FROM people where name = ?";
+            connection.query(query, [name], function (err, rows) {
                 if (err) deferred.reject(err);
                 deferred.resolve(rows);
             });
