@@ -1,6 +1,7 @@
 <div style="width:100%" layout="row">
     <md-sidenav class="site-sidenav md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
 
+       <div style="margin:10px 5px 15px 10px;">
         <ul>
             <li><a ng-click="_ttrl.isShowCity1(0)">内江市</a></li>
             <div ng-if="_ttrl.citys1[0].flag">
@@ -322,30 +323,7 @@
             </div>
 
         </ul>
-
-        <div>
-            <!--<button ng-click="_ttrl.changePrice()" class="btn btn-primary btn-large">  
-                 更改价格  
-            </button>-->
-            <!--<label>搜索户主</label>
-            <input required ng-model="_ttrl.filterText" ng-change="_ttrl.filter()">
-            </br>
-            <label>选择户主</label>
-            <select style="width:60px;" ng-init="_ttrl.searchName = _ttrl.peopleLists[0].name" ng-model="_ttrl.searchName" ng-options="x.name for x in _ttrl.peopleLists">
-            </select>
-            <button ng-click="_ttrl.search()" class="btn btn-primary btn-middle">  
-                 确认  
-            </button>-->
-
-
-            <!--<md-list>
-                <md-list-item ng-repeat="people in _ttrl.peopleLists">
-                    <md-button ng-click="_ttrl.search(people.id)">
-                        {{people.name}}
-                    </md-button>
-                </md-list-item>
-            </md-list>-->
-        </div>
+       </div>
 
     </md-sidenav>
 
@@ -1260,13 +1238,13 @@
                         </tr>
                         <tr>
                             <th>类别</th>
-                            <th>数量</th>
                             <th>单位</th>
+                            <th>数量</th>
                             <th>标准</th>
                             <th>补偿金额</th>
                             <th>类别</th>
-                            <th>数量</th>
                             <th>单位</th>
+                            <th>数量</th>
                             <th>标准</th>
                             <th>补偿金额</th>
                         </tr>
@@ -1294,25 +1272,26 @@
                             <td></td>
                             <td></td>
                             <td></td>
+                            <td>{{_ttrl.table2Total.total}}</td>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>{{_ttrl.table2Total.total2}}</td>
                             <td></td>
                             <td></td>
                         </tr>
                         <tr>
-                            <th colspan="12"> 应补偿金额合计：（小写） （大写）</th>
+                            <th colspan="12"> 应补偿金额合计：{{_ttrl.table2Total.total+_ttrl.table2Total.total2}}（小写） （大写）</th>
                         </tr>
                     </table>
                     <button ng-click="_ttrl.updateTable2()" class="btn btn-primary btn-middle">保存设置</button>
+                    <button ng-click="_ttrl.outputExcel()" class="btn btn-primary btn-middle">导出excel</button>
                     <div style="float: right">
-                        <md-button ng-click="" class="md-raised md-info">首页</md-button>
-                        <md-button ng-click="" class="md-raised md-info">上一页</md-button>
-                        <md-button ng-click="" class="md-raised md-info">下一页</md-button>
-                        <md-button ng-click="" class="md-raised md-info">末页</md-button>
+                        <md-button ng-click="_ttrl.getNextPage(0)" class="md-raised md-info">首页</md-button>
+                        <md-button ng-click="_ttrl.getNextPage(1)" class="md-raised md-info">上一页</md-button>
+                        <md-button ng-click="_ttrl.getNextPage(2)" class="md-raised md-info">下一页</md-button>
+                        <md-button ng-click="_ttrl.getNextPage(3)" class="md-raised md-info">末页</md-button>
                     </div>
                     </br>
                     </br>

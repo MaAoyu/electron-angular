@@ -68,9 +68,9 @@
         self.getAllTable4Datas = getAllTable4Datas;        //根据户主ID获取表四数据
         self.getAllTable41Datas = getAllTable41Datas;      //根据村名获取4-1数据
         self.saveTable43Data = saveTable43Data;            //表4-3保存数据
-        self.changePara = changePara;                      //更改价格参数
+        // self.changePara = changePara;                      //更改价格参数
         self.search = search;                              //点击搜索结果
-        self.changePrice = changePrice;                    //更改价格
+        // self.changePrice = changePrice;                    //更改价格
         self.getTable1ByPK = getTable1ByPK;
         self.getTable3ByPK = getTable3ByPK;
         self.getTable4ByPK = getTable4ByPK;
@@ -141,15 +141,39 @@
             }
         }
 
-        function updateTable2() {
+        function updateTable2($event) {
             for (var i = 0; i < self.table2Datas.length; i++) {
-                self.table2Datas[i].price = self.Table2Type[i].type1;
-                self.table2Datas[i].price2 = self.Table2Type[i].type2;
-                self.table2Datas[i].total = self.table2Datas[i].quantity * self.table2Datas[i].price;
-                self.table2Datas[i].total2 = self.table2Datas[i].quantity2 * self.table2Datas[i].price2;
-                //更新数据库
+                // self.table2Datas[i].price = self.Table2Type[i].type1;
+                // self.table2Datas[i].price2 = self.Table2Type[i].type2;
+                // self.table2Datas[i].total = self.table2Datas[i].quantity * self.table2Datas[i].price;
+                // self.table2Datas[i].total2 = self.table2Datas[i].quantity2 * self.table2Datas[i].price2;
+                //TODO 更新数据库
+                if (self.Table2Type[i] != null) {
+                    if (self.Table2Type[i].type1 != null) {
+                        //更改数据库中所有该种类的价格
+                        dataService.updateTable2(self.table2Datas[i].prj, self.Table2Type[i].type1).then(function (affectedRows) {
+                            $mdDialog.show(
+                                $mdDialog
+                                    .alert()
+                                    .clickOutsideToClose(true)
+                                    .title('Success')
+                                    .content('Data update Successfully!')
+                                    .ok('Ok')
+                                    .targetEvent($event)
+                            );
+                        });
+                    }
+                    if (self.Table2Type[i].type2 != null) {
+                        //更改数据库中所有该种类的价格
+                        dataService.updateTable2(self.table2Datas[i].prj2, self.Table2Type[i].type2).then(function (datas) {
+                        });
+                    }
+                }
             }
+            self.Table2Type = [];
 
+            //重新加载表二
+            showTable2Data(self.searchName.id, self.currPage);
         }
 
         function deleteTable1(pk) {
@@ -182,30 +206,30 @@
             });
         }
 
-        //更改价格参数
-        function changePrice() {
-            self.cityLevel = '0';
+        // //更改价格参数
+        // function changePrice() {
+        //     self.cityLevel = '0';
 
-        }
+        // }
 
-        function changePara() {
-            //更新参数表
-            dataService.updateParas(self.paras).then(function (datas) {
-            });
-            //更新表二
-            dataService.updateTable2crop(self.paras.crop).then(function (datas) {
-            });
-            dataService.updateTable2ss(self.paras.crop).then(function (datas) {
-            });
-            dataService.updateTable2ss(self.paras.crop).then(function (datas) {
-            });
-            //更新表四
-            dataService.updateTable4(self.paras).then(function (datas) {
-            });
+        // function changePara() {
+        //     //更新参数表
+        //     dataService.updateParas(self.paras).then(function (datas) {
+        //     });
+        //     //更新表二
+        //     dataService.updateTable2crop(self.paras.crop).then(function (datas) {
+        //     });
+        //     dataService.updateTable2ss(self.paras.crop).then(function (datas) {
+        //     });
+        //     dataService.updateTable2ss(self.paras.crop).then(function (datas) {
+        //     });
+        //     //更新表四
+        //     dataService.updateTable4(self.paras).then(function (datas) {
+        //     });
 
-        }
+        // }
 
-        //得到表1-1全部数据
+        //得到表1-2全部数据
         function getAllTable12Datas() {
             // var currC4List = self.c4List[self.cityName];//该镇下所有村的数组
             // for (var i = 0; i < currC4List.length; i++) {
@@ -376,23 +400,31 @@
 
         //选择一个户主显示表二
         function showTable2Data(id, page) {
+            self.table2Datas = []
+
             dataService.getTable1ById(id).then(function (datas) {
                 self.current = datas[0];
             });//取表头信息
             dataService.gettable2Datas(id, page).then(function (datas) {
+                //console.log("length:"+datas.length);
                 //表特殊处理
                 var rawDatas = [].concat(datas);
+                self.table2Total = { "total": 0, "total2": 0 };
                 for (var i = 0; i < rawDatas.length; i++) {
                     if (2 * i + 1 > rawDatas.length)
                         break;
-
                     self.table2Datas[i] = rawDatas[2 * i];
                     self.table2Datas[i].total = self.table2Datas[i].quantity * self.table2Datas[i].price;
+                    self.table2Total.total = self.table2Total.total + self.table2Datas[i].total;
+
+                    if (2 * i + 1 >= rawDatas.length)
+                        break;
                     self.table2Datas[i].prj2 = rawDatas[2 * i + 1].prj;
                     self.table2Datas[i].unit2 = rawDatas[2 * i + 1].unit;
                     self.table2Datas[i].quantity2 = rawDatas[2 * i + 1].quantity;
                     self.table2Datas[i].price2 = rawDatas[2 * i + 1].price;
                     self.table2Datas[i].total2 = self.table2Datas[i].quantity2 * self.table2Datas[i].price2;
+                    self.table2Total.total2 = self.table2Total.total2 + self.table2Datas[i].total2;
                 }
             });//表信息
         }
@@ -481,17 +513,19 @@
                 currTable2.prj = self.curTable1.prj;
                 currTable2.unit = self.curTable1.unit;
                 currTable2.quantity = self.curTable1.quantity;
-                switch (self.curTable1.prj) {
-                    case "农作物":
-                        currTable2.price = self.paras.crop;
-                        break;
-                    case "农用设施":
-                        currTable2.price = self.paras.ss;
-                        break;
-                    default:
-                        currTable2.price = self.paras.tree;
-                }
-                //currTable2.total = currTable2.price * currTable2.quantity;
+                // currTable2.price = self.paras[self.curTable1.prj];
+                // switch (self.curTable1.prj) {
+                //     case "农作物":
+                //         currTable2.price = self.paras.crop;
+                //         break;
+                //     case "农用设施":
+                //         currTable2.price = self.paras.ss;
+                //         break;
+                //     default:
+                //         currTable2.price = self.paras.tree;
+                // }
+                //TODO 价格先按每个人都不同处理
+                currTable2.price = 0;
                 dataService.addTable2(currTable2).then(function (affectedRows) {
                 });
 
@@ -571,7 +605,8 @@
         }
 
         function search() {
-            console.log(self.searchName.id);
+            self.currPage = 1;
+            //console.log("searchID:"+self.searchName.id);
             switch (self.tableIndex) {
                 case '2':
                     showTable2Data(self.searchName.id, 1);
@@ -604,6 +639,143 @@
 
         //导出表格
         function outputExcel() {
+            switch (self.tableIndex) {
+                case '1':
+                    outputExcel1();
+                    break;
+                case '2':
+                    outputExcel2();
+                    break;
+                case '3':
+                    outputExcel3();
+                    break;
+                case '4':
+                    outputExcel4();
+                    break;
+                default:
+                    console.log("no datas..");
+            }
+        }
+
+        function outputExcel2() {
+            const fs = require('fs');
+            const xlsx = require('better-xlsx');
+
+            const file = new xlsx.File();
+            const style = new xlsx.Style();
+            style.fill.patternType = 'solid';
+            style.fill.fgColor = '00FF0000';
+            style.fill.bgColor = 'FF000000';
+            style.align.h = 'center';
+            style.align.v = 'center';
+
+            const sheet = file.addSheet('Sheet1');
+            //表上面内容
+            var lines = [];
+            lines[0] = "建设项目名称：川南城际铁路 线   标段";
+            lines[1] = "铁路建设项目（征）用集体土地面积、青苗及附着物补偿清册";
+            lines[2] = self.cityName + " 年 月 日 共 " + self.totalPages + "页 第" + self.currPage + "页";
+            for (let i = 0; i < 3; i++) {
+                const rowLine = sheet.addRow();
+                const cellLine = rowLine.addCell();
+                cellLine.value = lines[i];
+                cellLine.hMerge = 9;
+                if (i == 1)
+                    cellLine.style = style;
+            }
+
+            //多级表头
+            const row1 = sheet.addRow();
+            var cell1 = null;
+            var table2Heads = ["铁路里程范围", self.current.rail, "户主姓名",
+                self.current.name, "身份证号码", self.current.id];
+            for (let i = 0; i < 3; i++) {
+                cell1 = row1.addCell();
+                cell1.value = table2Heads[i * 2];
+                cell1 = row1.addCell();
+                cell1.value = table2Heads[i * 2 + 1];
+                cell1.hMerge = 1;
+                cell1 = row1.addCell();
+            }
+
+            const row2 = sheet.addRow();
+            var cell2 = row2.addCell();
+            cell2.value = "青苗及附着物补偿";
+            cell2.hMerge = 4;
+            cell2.style = style;
+            for (let i = 0; i < 4; i++) {
+                row2.addCell();
+            }
+            cell2 = row2.addCell();
+            cell2.value = "青苗及附着物补偿";
+            cell2.hMerge = 4;
+            cell2.style = style;
+
+            const row3 = sheet.addRow();
+            var cell3 = null;
+            var table2Heads2 = ["类别", "单位", "数量", "标准", "补偿金额"];
+            for (let i = 0; i < 5; i++) {
+                cell3 = row3.addCell();
+                cell3.value = table2Heads2[i];
+            }
+            for (let i = 0; i < 5; i++) {
+                cell3 = row3.addCell();
+                cell3.value = table2Heads2[i];
+            }
+
+            //表内容
+            var table2Content = ["prj", "unit", "quantity", "price", "total",
+            "prj2", "unit2", "quantity2", "price2", "total2"];
+            for (let i = 0; i < self.table2Datas.length; i++) {
+                const rowContent = sheet.addRow();
+                for (let j = 0; j < table2Content.length; j++) {
+                    const cellContent = rowContent.addCell();
+                    cellContent.value = self.table2Datas[i][table2Content[j]];
+                }
+            }
+            //合计行
+            const rowTotal = sheet.addRow();
+            var cellT1 = rowTotal.addCell();
+            cellT1.value = "小计";
+            for (let i = 0; i < 3; i++) {
+                rowTotal.addCell();
+            }
+            cellT1 = rowTotal.addCell();
+            cellT1.value = self.table2Total.total;
+            for (let i = 0; i < 4; i++) {
+                rowTotal.addCell();
+            }
+            cellT1 = rowTotal.addCell();
+            cellT1.value = self.table2Total.total2;
+           
+            //表尾
+            var tableOver = ["乡镇人民政府（公章）： ", "被拆迁人（签字/章）：", "结算人（签字）：",
+                "审核人（签字）："];
+            for (let i = 0; i < 2; i++) {
+                const rowOver = sheet.addRow();
+
+                const cellOver = rowOver.addCell();
+                cellOver.value = tableOver[i * 2];
+                cellOver.hMerge = 4;
+
+                for (let i = 0; i < 4; i++) {
+                    rowOver.addCell();
+                }
+                const cellOver2 = rowOver.addCell();
+                cellOver2.value = tableOver[i * 2 + 1];
+                cellOver2.hMerge = 4;
+            }
+
+
+            var excelRoot = 'table/table2/' + self.cityName + self.currPage + '.xlsx';
+
+            file
+                .saveAs()
+                .pipe(fs.createWriteStream(excelRoot));
+        }
+
+
+        function outputExcel1() {
             const fs = require('fs');
             const xlsx = require('better-xlsx');
 
@@ -659,8 +831,8 @@
                 //cell3.style = style;
             }
             //表内容
-            var table1Content = ["name","id","family","people","rail","type","area",
-            "land","nonland","prj","unit","quantity"];
+            var table1Content = ["name", "id", "family", "people", "rail", "type", "area",
+                "land", "nonland", "prj", "unit", "quantity"];
             for (let i = 0; i < self.table1Datas.length; i++) {
                 const rowContent = sheet.addRow();
                 for (let j = 0; j < table1Content.length; j++) {

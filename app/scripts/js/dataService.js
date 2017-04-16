@@ -16,10 +16,10 @@
     function DataService($q) {
         return {
             getAllParas: getAllParas,       //获取参数
-            updateParas: updateParas,       //更新参数
-            updateTable2crop: updateTable2crop,     //更新表二crop价格
-            updateTable2ss: updateTable2ss,         //更新表二ss价格
-            updateTable2tree: updateTable2tree,     //更新表二tree价格
+            // updateParas: updateParas,       //更新参数
+            // updateTable2crop: updateTable2crop,     //更新表二crop价格
+            // updateTable2ss: updateTable2ss,         //更新表二ss价格
+            // updateTable2tree: updateTable2tree,     //更新表二tree价格
             getDatas: getDatas,             //取表一数据
             create: createData,             //添加表一
             addTablePeople: addTablePeople, //添加people表
@@ -40,6 +40,7 @@
             getTable3ByPK: getTable3ByPK,
             getTable4ByPK: getTable4ByPK,
             updateTable1: updateTable1,
+            updateTable2: updateTable2,
             getPeopleByName: getPeopleByName,
             getTable1Count: getTable1Count     //表一行数
         };
@@ -65,38 +66,48 @@
             return deferred.promise;
         }
 
-        function updateTable2crop(crop) {
-            var deferred = $q.defer();
-            var query = "UPDATE table2 SET price = ? WHERE prj = '农作物'";
-            connection.query(query, [crop], function (err, res) {
-                if (err) deferred.reject(err);
-                deferred.resolve(res);
-            });
-            return deferred.promise;
-        }
-        function updateTable2ss(ss) {
-            var deferred = $q.defer();
-            var query = "UPDATE table2 SET price = ? WHERE prj = '农用设施'";
-            connection.query(query, [ss], function (err, res) {
-                if (err) deferred.reject(err);
-                deferred.resolve(res);
-            });
-            return deferred.promise;
-        }
-        function updateTable2tree(tree) {
-            var deferred = $q.defer();
-            var query = "UPDATE table2 SET price = ? WHERE prj = '树木'";
-            connection.query(query, [tree], function (err, res) {
-                if (err) deferred.reject(err);
-                deferred.resolve(res);
-            });
-            return deferred.promise;
-        }
+        // function updateTable2crop(crop) {
+        //     var deferred = $q.defer();
+        //     var query = "UPDATE table2 SET price = ? WHERE prj = '农作物'";
+        //     connection.query(query, [crop], function (err, res) {
+        //         if (err) deferred.reject(err);
+        //         deferred.resolve(res);
+        //     });
+        //     return deferred.promise;
+        // }
+        // function updateTable2ss(ss) {
+        //     var deferred = $q.defer();
+        //     var query = "UPDATE table2 SET price = ? WHERE prj = '农用设施'";
+        //     connection.query(query, [ss], function (err, res) {
+        //         if (err) deferred.reject(err);
+        //         deferred.resolve(res);
+        //     });
+        //     return deferred.promise;
+        // }
+        // function updateTable2tree(tree) {
+        //     var deferred = $q.defer();
+        //     var query = "UPDATE table2 SET price = ? WHERE prj = '树木'";
+        //     connection.query(query, [tree], function (err, res) {
+        //         if (err) deferred.reject(err);
+        //         deferred.resolve(res);
+        //     });
+        //     return deferred.promise;
+        // }
 
-        function updateParas(paras) {
+        // function updateParas(paras) {
+        //     var deferred = $q.defer();
+        //     var query = "UPDATE para SET ? WHERE id = 1";
+        //     connection.query(query, paras, function (err, res) {
+        //         if (err) deferred.reject(err);
+        //         deferred.resolve(res);
+        //     });
+        //     return deferred.promise;
+        // }
+
+        function updateTable2(prj,price) {
             var deferred = $q.defer();
-            var query = "UPDATE para SET ? WHERE id = 1";
-            connection.query(query, paras, function (err, res) {
+            var query = "UPDATE table2 SET price = ? WHERE prj = ?";
+            connection.query(query, [price,prj], function (err, res) {
                 if (err) deferred.reject(err);
                 deferred.resolve(res);
             });
