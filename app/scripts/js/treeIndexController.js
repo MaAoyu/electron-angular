@@ -20,25 +20,28 @@
         { "name": "自贡市大安区何市镇", "flag": false }, { "name": "自贡市大安区三多寨镇", "flag": false }, { "name": "自贡市沿滩区仙市镇", "flag": false }, { "name": "自贡市沿滩区瓦市镇", "flag": false },
         { "name": "自贡市富顺县互助镇", "flag": false }, { "name": "自贡市富顺县富世镇", "flag": false }, { "name": "自贡市富顺县狮市镇", "flag": false }, { "name": "自贡市富顺县东湖镇", "flag": false },
         { "name": "自贡市富顺县骑龙镇", "flag": false }, { "name": "自贡市富顺县童寺镇", "flag": false }, { "name": "自贡市富顺县古佛镇", "flag": false }, { "name": "自贡市富顺县龙万乡", "flag": false },
-        { "name": "自贡市富顺县代寺镇", "flag": false }, { "name": "自贡市富顺县中石镇", "flag": false }, 
-        { "name": "泸州市泸县玉蝉街道办事处", "flag": false }, { "name": "泸州市泸县福集镇", "flag": false },{ "name": "泸州市泸县富集镇", "flag": false }, { "name": "泸州市泸县牛滩镇", "flag": false },
-        { "name": "泸州市泸县德胜镇", "flag": false }, { "name": "泸州市龙马潭区双加镇", "flag": false },{ "name": "泸州市龙马潭区石洞镇", "flag": false }, { "name": "泸州市龙马潭区鱼塘镇", "flag": false },
+        { "name": "自贡市富顺县代寺镇", "flag": false }, { "name": "自贡市富顺县中石镇", "flag": false },
+        { "name": "泸州市泸县玉蝉街道办事处", "flag": false }, { "name": "泸州市泸县福集镇", "flag": false }, { "name": "泸州市泸县富集镇", "flag": false }, { "name": "泸州市泸县牛滩镇", "flag": false },
+        { "name": "泸州市泸县德胜镇", "flag": false }, { "name": "泸州市龙马潭区双加镇", "flag": false }, { "name": "泸州市龙马潭区石洞镇", "flag": false }, { "name": "泸州市龙马潭区鱼塘镇", "flag": false },
         { "name": "泸州市龙马潭区安宁镇", "flag": false }];
-        
+
         self.c4CuuList = [];
         self.c4List = new Array();
-        self.c4List["内江市东兴区高桥街道办"] = ["内江市东兴区高桥街道办陡坎村","内江市东兴区高桥街道办赛峨村"];
+        self.c4List["内江市东兴区高桥街道办"] = ["内江市东兴区高桥街道办陡坎村", "内江市东兴区高桥街道办赛峨村"];
         self.isShowCity1 = isShowCity1;
         self.isShowCity2 = isShowCity2;
         self.isShowCity3 = isShowCity3;
         self.selectItem = selectItem;
         self.selectTable = selectTable;
         //具体表格参数
-        self.paras = {"crop":"0","ss":"0","tree":"0","b1":"0","b2":"0","b3":"0",
-                    "b4":"0","b5":"0","a1":"0","a2":"0"}; //价格参数
+        self.paras = {
+            "crop": "0", "ss": "0", "tree": "0", "b1": "0", "b2": "0", "b3": "0",
+            "b4": "0", "b5": "0", "a1": "0", "a2": "0"
+        }; //价格参数
         self.current = null;   //当前户主
         self.curTable1 = null; //表一当前添加数据
         self.table1Datas = []; //表一所有数据
+        self.table1Total = { "area": 0, "land": 0, "nonland": 0, "quantity": 0 }; //表一合计
         self.peopleLists = []; //所有户主的列表
         self.table2Datas = []; //表二所有数据
         self.filterText = null //搜索关键字
@@ -54,6 +57,8 @@
         self.buildingNames = ["框架", "砖混", "砖木", "土木", "简易", "其它"];
         self.Table2Type = [];   //记录表二价格标准
         self.searchName = null;
+        self.currPage = 1;
+        self.totalPages = 1;
 
         self.saveTable1Data = saveTable1Data;              //表一保存数据、people表保存数据
         self.showTable2Data = showTable2Data;              //表二点击左侧列表选择户主后显示详细信息
@@ -69,8 +74,11 @@
         self.getTable1ByPK = getTable1ByPK;
         self.getTable3ByPK = getTable3ByPK;
         self.getTable4ByPK = getTable4ByPK;
-        self.deleteTable1 = deleteTable1;    
-        self.updateTable2 = updateTable2;                   //更改表二价格标准             
+        self.deleteTable1 = deleteTable1;
+        self.updateTable2 = updateTable2;                   //更改表二价格标准   
+        self.outputExcel = outputExcel;                     //导出excel                 
+        self.getNextPage = getNextPage;                     //分页
+
 
         //得到各参数
         getAllParas();
@@ -79,7 +87,62 @@
         // Internal functions 
         //----------------------
 
-        function updateTable2(){
+        //分页
+        function getNextPage(flag) {
+            var page = 0;
+            switch (flag) {
+                case 0: //首页
+                    page = 1;
+                    self.currPage = page;
+                    break;
+                case 1://上一页
+                    if (self.currPage == 1) {
+                        alert("已经是第一页！");
+                        page = 1;
+                    }
+
+                    else {
+                        page = self.currPage - 1;
+                        self.currPage = page;
+                    }
+                    break;
+                case 2://下一页
+                    if (self.currPage == self.totalPages) {
+                        alert("已经是最后一页！");
+                        page = self.currPage;
+                    }
+                    else {
+                        page = self.currPage + 1;
+                        self.currPage = page;
+                    }
+                    break;
+                case 3://尾页
+                    page = self.totalPages;
+                    self.currPage = page;
+                    break;
+                default:
+                    console.log("no datas..");
+            }
+
+            switch (self.tableIndex) {
+                case '1':
+                    getAllTable1Datas(page);//得到初始表一数据
+                    break;
+                case '2':
+                    showTable2Data(self.searchName.id, page);
+                    break;
+                case '3':
+                    getAllTable3Datas(self.searchName.id, page);
+                    break;
+                case '4':
+                    getAllTable4Datas(self.searchName.id, page);
+                    break;
+                default:
+                    console.log("no datas..");
+            }
+        }
+
+        function updateTable2() {
             for (var i = 0; i < self.table2Datas.length; i++) {
                 self.table2Datas[i].price = self.Table2Type[i].type1;
                 self.table2Datas[i].price2 = self.Table2Type[i].type2;
@@ -90,10 +153,10 @@
 
         }
 
-        function deleteTable1(pk){
+        function deleteTable1(pk) {
 
         }
-        
+
         function getTable1ByPK(pk) {
             dataService.getTable1ByPK(pk).then(function (datas) {
                 var rawDatas = [].concat(datas);
@@ -121,7 +184,7 @@
         }
 
         //更改价格参数
-        function changePrice(){
+        function changePrice() {
             self.cityLevel = '0';
 
         }
@@ -160,10 +223,10 @@
             var currC4List = self.c4List[self.cityName];//该镇下所有村的数组
             for (var i = 0; i < currC4List.length; i++) {
                 dataService.getAllTable3Datas(currC4List[i]).then(function (datas) {
-                //TODO:表三增加村字段，再汇总数据
-                self.table11Datas.city4 = currC4List[i];
+                    //TODO:表三增加村字段，再汇总数据
+                    self.table11Datas.city4 = currC4List[i];
 
-            });
+                });
             }
         }
 
@@ -197,11 +260,11 @@
             var currC4List = self.c4List[self.cityName];//该镇下所有村的数组
             for (var i = 0; i < currC4List.length; i++) {
                 dataService.getAllTable41Datas(currC4List[i]).then(function (datas) {
-                self.table41Datas = [].concat(datas);
-                self.table42Datas.name = currC4List[i];
-                //TODO:补偿类别固定则直接从数据库取和
+                    self.table41Datas = [].concat(datas);
+                    self.table42Datas.name = currC4List[i];
+                    //TODO:补偿类别固定则直接从数据库取和
 
-            });
+                });
             }
         }
 
@@ -214,15 +277,15 @@
 
         //得到表四全部数据
         function getAllTable4Datas(id) {
-           dataService.getAllTable4Datas(id).then(function (datas) {
-                 var rawT4Datas = [].concat(datas);
-                 for (var i = 0; i < rawT4Datas.length; i++) {
-                    self.table4Datas[i] = rawT4Datas[i]; 
+            dataService.getAllTable4Datas(id).then(function (datas) {
+                var rawT4Datas = [].concat(datas);
+                for (var i = 0; i < rawT4Datas.length; i++) {
+                    self.table4Datas[i] = rawT4Datas[i];
                     self.table4Datas[i].total = self.table4Datas[i].area1 * self.table4Datas[i].price;
                     self.table4Datas[i].total2 = self.table4Datas[i].quantity * self.table4Datas[i].price2;
                 };
             });
-           
+
         }
 
         //添加表三数据
@@ -248,33 +311,33 @@
             currTable4.type1 = self.curTable3.type2;
             currTable4.area1 = self.curTable3.area;
             switch (self.curTable3.type2) {
-                    case "框架":
-                        currTable4.t1 = self.curTable3.area;
-                        currTable4.price = self.paras.b1;
-                        break;
-                    case "砖混":
-                        currTable4.t2 = self.curTable3.area;
-                        currTable4.price = self.paras.b2;
-                        break;
-                    case "砖木":
-                        currTable4.t3 = self.curTable3.area;
-                        currTable4.price = self.paras.b3;
-                        break;
-                    case "土木":
-                        currTable4.t4 = self.curTable3.area;
-                        currTable4.price = self.paras.b4;
-                        break;
-                    default:
-                        currTable4.t5 = self.paras.tree;
-                        currTable4.price = self.paras.b5;
-                }
+                case "框架":
+                    currTable4.t1 = self.curTable3.area;
+                    currTable4.price = self.paras.b1;
+                    break;
+                case "砖混":
+                    currTable4.t2 = self.curTable3.area;
+                    currTable4.price = self.paras.b2;
+                    break;
+                case "砖木":
+                    currTable4.t3 = self.curTable3.area;
+                    currTable4.price = self.paras.b3;
+                    break;
+                case "土木":
+                    currTable4.t4 = self.curTable3.area;
+                    currTable4.price = self.paras.b4;
+                    break;
+                default:
+                    currTable4.t5 = self.paras.tree;
+                    currTable4.price = self.paras.b5;
+            }
             switch (self.curTable3.prj) {
-                    case "院坝":
-                        currTable4.price2 = self.paras.a1;
-                        break;
-                    default:
-                        currTable4.price2 = self.paras.a2;
-                }
+                case "院坝":
+                    currTable4.price2 = self.paras.a1;
+                    break;
+                default:
+                    currTable4.price2 = self.paras.a2;
+            }
             currTable4.arcName = self.curTable3.prj;
             currTable4.unit = self.curTable3.unit;
             currTable4.quantity = self.curTable3.quantity;
@@ -301,23 +364,23 @@
                 getPeopleList();
             }
             else {
-                dataService.getNameListByName(self.cityName,self.filterText).then(function (customers) {
+                dataService.getNameListByName(self.cityName, self.filterText).then(function (customers) {
                     self.peopleLists = [].concat(customers);
                     self.current = customers[0];
                 });
             }
             //直接显示搜索结果第一的具体信息
-            showTable2Data(self.current.id);
-            getAllTable3Datas(self.current.id);
-            getAllTable4Datas(self.current.id);
+            showTable2Data(self.current.id, 1);
+            getAllTable3Datas(self.current.id, 1);
+            getAllTable4Datas(self.current.id, 1);
         }
 
         //选择一个户主显示表二
-        function showTable2Data(id) {
-             dataService.getTable1ById(id).then(function (datas) {
+        function showTable2Data(id, page) {
+            dataService.getTable1ById(id).then(function (datas) {
                 self.current = datas[0];
             });//取表头信息
-            dataService.gettable2Datas(id).then(function (datas) {
+            dataService.gettable2Datas(id, page).then(function (datas) {
                 //表特殊处理
                 var rawDatas = [].concat(datas);
                 for (var i = 0; i < rawDatas.length; i++) {
@@ -344,18 +407,36 @@
 
 
         //得到表一全部数据
-        function getAllTable1Datas() {
-            console.log("get datas....");
-            console.log(self.cityName);
-            dataService.getDatas(self.cityName).then(function (datas) {
+        function getAllTable1Datas(page) {
+            //console.log("get datas....");
+            dataService.getTable1Count().then(function (affectedRows) {
+                //console.log("pages:" + Math.ceil(affectedRows[0]["count(*)"]/10));
+                self.totalPages = Math.ceil(affectedRows[0]["count(*)"] / 10);
+
+            });
+
+            dataService.getDatas(self.cityName, page).then(function (datas) {
                 self.table1Datas = [].concat(datas);
-                console.log("data:"+self.table1Datas[0].name);
+                for (let i = 0; i < self.table1Datas.length; i++) {
+                    if (self.table1Datas[i].area != null) {
+                        self.table1Total.area = self.table1Total.area + self.table1Datas[i].area;
+                    }
+                    if (self.table1Datas[i].land != null) {
+                        self.table1Total.land = self.table1Total.land + self.table1Datas[i].land;
+                    }
+                    if (self.table1Datas[i].nonland != null) {
+                        self.table1Total.nonland = self.table1Total.nonland + self.table1Datas[i].nonland;
+                    }
+                    if (self.table1Datas[i].quantity != null) {
+                        self.table1Total.quantity = self.table1Total.quantity + self.table1Datas[i].quantity;
+                    }
+                }
             });
         }
 
         //添加表一数据
         function saveTable1Data($event) {
-            if(self.curTable1 != null && self.curTable1.autoID != null){
+            if (self.curTable1 != null && self.curTable1.autoID != null) {
                 dataService.updateTable1(self.curTable1).then(function (affectedRows) {
                     $mdDialog.show(
                         $mdDialog
@@ -368,37 +449,37 @@
                     );
                 });
             }
-            else{
-                 self.curTable1.city = self.cityName;
-            //console.log("self.curTable1:" + self.curTable1);
-            dataService.create(self.curTable1).then(function (affectedRows) {
-                //console.log("affectedRows:" + affectedRows);
-                $mdDialog.show(
-                    $mdDialog
-                        .alert()
-                        .clickOutsideToClose(true)
-                        .title('Success')
-                        .content('Data Added Successfully!')
-                        .ok('Ok')
-                        .targetEvent($event)
-                );
-            });
-            
-            //添加用户表，身份证为主键
-            var people = {"id":"","name":"","city":""};
-            people.id = self.curTable1.id;
-            people.name = self.curTable1.name;
-            people.city = self.curTable1.city;
-            dataService.addTablePeople(people).then(function (affectedRows) {
-            });
-            
-            //添加相应数据到表二
-            var currTable2 = {};
-            currTable2.id = self.curTable1.id;
-            currTable2.prj = self.curTable1.prj;
-            currTable2.unit = self.curTable1.unit;
-            currTable2.quantity = self.curTable1.quantity;
-            switch (self.curTable1.prj) {
+            else {
+                self.curTable1.city = self.cityName;
+                //console.log("self.curTable1:" + self.curTable1);
+                dataService.create(self.curTable1).then(function (affectedRows) {
+                    //console.log("affectedRows:" + affectedRows);
+                    $mdDialog.show(
+                        $mdDialog
+                            .alert()
+                            .clickOutsideToClose(true)
+                            .title('Success')
+                            .content('Data Added Successfully!')
+                            .ok('Ok')
+                            .targetEvent($event)
+                    );
+                });
+
+                //添加用户表，身份证为主键
+                var people = { "id": "", "name": "", "city": "" };
+                people.id = self.curTable1.id;
+                people.name = self.curTable1.name;
+                people.city = self.curTable1.city;
+                dataService.addTablePeople(people).then(function (affectedRows) {
+                });
+
+                //添加相应数据到表二
+                var currTable2 = {};
+                currTable2.id = self.curTable1.id;
+                currTable2.prj = self.curTable1.prj;
+                currTable2.unit = self.curTable1.unit;
+                currTable2.quantity = self.curTable1.quantity;
+                switch (self.curTable1.prj) {
                     case "农作物":
                         currTable2.price = self.paras.crop;
                         break;
@@ -408,22 +489,22 @@
                     default:
                         currTable2.price = self.paras.tree;
                 }
-            //currTable2.total = currTable2.price * currTable2.quantity;
-            dataService.addTable2(currTable2).then(function (affectedRows) {
-            });
+                //currTable2.total = currTable2.price * currTable2.quantity;
+                dataService.addTable2(currTable2).then(function (affectedRows) {
+                });
 
-            self.curTable1 = {};
-            getAllTable1Datas();
-            //添加4-1表
-            self.curTable41.name = self.curTable1.name;
-            self.curTable41.type = self.curTable1.prj;
-            self.curTable41.unit = self.curTable1.unit;
-            self.curTable41.quantity = self.curTable1.quantity;
-            self.curTable41.city = self.curTable1.city;
-            dataService.addTable41(self.curTable41).then(function (affectedRows) {
-            });
+                self.curTable1 = {};
+                getAllTable1Datas();
+                //添加4-1表
+                self.curTable41.name = self.curTable1.name;
+                self.curTable41.type = self.curTable1.prj;
+                self.curTable41.unit = self.curTable1.unit;
+                self.curTable41.quantity = self.curTable1.quantity;
+                self.curTable41.city = self.curTable1.city;
+                dataService.addTable41(self.curTable41).then(function (affectedRows) {
+                });
             }
-           
+
         }
 
 
@@ -463,59 +544,150 @@
         }
         function selectTable(index) {
             self.tableIndex = index;
-            if(index == 1)
-                getAllTable1Datas();//得到初始表一数据
-            if(index == 2)
-                getPeopleList();
-            if(index == 42)
-                getAllTable42Datas();//4-2表数据汇总
-            if(index == 43)
-                getAllTable43Datas(self.cityName);//4-3表数据初始化
-            if(index == 12)
-                getAllTable12Datas();//1-2表数据汇总
-            if(index == 11)
-                getAllTable11Datas();//1-1表数据汇总
-                
+            switch (self.tableIndex) {
+                case '1':
+                    getAllTable1Datas(1);//得到初始表一数据
+                    break;
+                case '2':
+                    getPeopleList();
+                    break;
+                case '11':
+                    getAllTable11Datas();//1-1表数据汇总
+                    break;
+                case '12':
+                    getAllTable12Datas();//1-2表数据汇总
+                    break;
+                case '42':
+                    getAllTable42Datas();//4-2表数据汇总
+                    break;
+                case '43':
+                    getAllTable43Datas(self.cityName);//4-3表数据初始化
+                    break;
+                default:
+                    console.log("no datas..");
+            }
         }
 
         function search() {
             console.log(self.searchName.id);
-            // var searchID = null;
-            // dataService.getPeopleByName(self.searchName.name).then(function (datas) {
-            //     var rawDatas = [].concat(datas);
-            //     console.log(rawDatas.length);
-            //     searchID = rawDatas[0].id;
-            //     console.log(self.searchName);
-            //     //console.log("data:"+self.table1Datas[0].name);
-            // });
             switch (self.tableIndex) {
-                    case '2':
-                        showTable2Data(self.searchName.id);
-                        break;
-                    case '3':
-                        getAllTable3Datas(self.searchName.id);
-                        break;
-                    case '4':
-                        getAllTable4Datas(self.searchName.id);
-                        break;
-                    default:
-                        console.log("no datas..");
-                }
+                case '2':
+                    showTable2Data(self.searchName.id, 1);
+                    break;
+                case '3':
+                    getAllTable3Datas(self.searchName.id, 1);
+                    break;
+                case '4':
+                    getAllTable4Datas(self.searchName.id, 1);
+                    break;
+                default:
+                    console.log("no datas..");
+            }
         }
 
-        function getAllParas(){
+        function getAllParas() {
             dataService.getAllParas().then(function (datas) {
-                self.paras.crop=datas[0].crop;
-                self.paras.ss=datas[0].ss;
-                self.paras.tree=datas[0].tree;
-                self.paras.b1=datas[0].b1;
-                self.paras.b2=datas[0].b2;
-                self.paras.b3=datas[0].b3;
-                self.paras.b4=datas[0].b4;
-                self.paras.b5=datas[0].b5;
-                self.paras.a1=datas[0].a1;
-                self.paras.a2=datas[0].a2;
+                self.paras.crop = datas[0].crop;
+                self.paras.ss = datas[0].ss;
+                self.paras.tree = datas[0].tree;
+                self.paras.b1 = datas[0].b1;
+                self.paras.b2 = datas[0].b2;
+                self.paras.b3 = datas[0].b3;
+                self.paras.b4 = datas[0].b4;
+                self.paras.b5 = datas[0].b5;
+                self.paras.a1 = datas[0].a1;
+                self.paras.a2 = datas[0].a2;
             });
+        }
+
+        //导出表格
+        function outputExcel() {
+            const fs = require('fs');
+            const xlsx = require('better-xlsx');
+
+            const file = new xlsx.File();
+            const style = new xlsx.Style();
+            style.fill.patternType = 'solid';
+            style.fill.fgColor = '00FF0000';
+            style.fill.bgColor = 'FF000000';
+            style.align.h = 'center';
+            style.align.v = 'center';
+
+            const sheet = file.addSheet('Sheet1');
+            //表上面内容
+            var lines = [];
+            lines[0] = "建设项目名称：川南城际铁路 线   标段";
+            lines[1] = "铁路建设项目（征）用集体土地面积、青苗及附着物登记清册";
+            lines[2] = self.cityName + " 年 月 日 共 " + self.totalPages + "页 第" + self.currPage + "页";
+            for (let i = 0; i < 3; i++) {
+                const rowLine = sheet.addRow();
+                const cellLine = rowLine.addCell();
+                cellLine.value = lines[i];
+                cellLine.hMerge = 12;
+            }
+
+            //多级表头
+            const row1 = sheet.addRow();
+            var table1Head = ['姓名', '身份证号码', '家庭人口', '安置人口', '铁路里程范围', '用地性质', '用地面积（亩）', '青苗及附着物补偿', '户主签名', '小计', '耕地', '非耕地', '项目', '单位', '数量'];
+            for (let i = 0; i < 9; i++) {
+                if (i == 6 || i == 7) {
+                    const cell2 = row1.addCell();
+                    cell2.value = table1Head[i];
+                    cell2.hMerge = 2;
+                    cell2.style = style;
+                    row1.addCell();
+                    row1.addCell();
+                }
+                else {
+                    const cell1 = row1.addCell();
+                    cell1.value = table1Head[i];
+                    cell1.vMerge = 1;
+                    cell1.style = style;
+                }
+            }
+            const row2 = sheet.addRow();
+            for (let i = 0; i < 6; i++) {
+                row2.addCell();
+            }
+            for (let i = 9; i < 15; i++) {
+                const cell3 = row2.addCell();
+                cell3.value = table1Head[i];
+                cell3.style = style;
+            }
+            //表内容
+            var table1Content = ["name", "id"];
+            for (let i = 0; i < self.table1Datas.length; i++) {
+                const rowContent = sheet.addRow();
+                for (let i = 0; i < table1Content.length; i++) {
+                    const cellContent = rowContent.addCell();
+                    cellContent.value = table1Content[i];
+                }
+            }
+            //合计行
+            const rowTotal = sheet.addRow();
+            const cellT1 = rowTotal.addCell();
+            cellT1.value = "本页合计";
+            cellT1.hMerge = 1;
+            for (let i = 0; i < 5; i++) {
+                rowTotal.addCell();
+            }
+            var totalLine = [];
+            totalLine[0] = self.table1Total.area;
+            totalLine[1] = self.table1Total.area;
+            totalLine[2] = self.table1Total.area;
+            totalLine[3] = self.table1Total.area;
+            totalLine[4] = self.table1Total.area;
+            totalLine[5] = self.table1Total.area;
+            for (let i = 0; i < table1Content.length; i++) {
+                cellT1 = rowTotal.addCell();
+                cellT1.value = table1Content[i];
+            }
+            //表尾
+
+
+            file
+                .saveAs()
+                .pipe(fs.createWriteStream('table/table1/test.xlsx'));
         }
     }
 

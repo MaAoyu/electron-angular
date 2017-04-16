@@ -40,8 +40,19 @@
             getTable3ByPK: getTable3ByPK,
             getTable4ByPK: getTable4ByPK,
             updateTable1: updateTable1,
-            getPeopleByName: getPeopleByName
+            getPeopleByName: getPeopleByName,
+            getTable1Count: getTable1Count     //表一行数
         };
+
+        function getTable1Count() {
+            var deferred = $q.defer();
+            var query = "SELECT count(*) FROM table_manager.table1";
+            connection.query(query, function (err, res) {
+                if (err) deferred.reject(err);
+                deferred.resolve(res);
+            });
+            return deferred.promise;
+        }
 
         //todo
         function updateTable4(paras) {
@@ -182,20 +193,22 @@
             return deferred.promise;
         }
 
-        function getAllTable4Datas(id){
+        function getAllTable4Datas(id,page){
             var deferred = $q.defer();
-            var query = "SELECT * FROM table4 where id = ?";
-            connection.query(query, [id], function (err, rows) {
+            var limit1 = 10 * (page-1);
+            var query = "SELECT * FROM table4 where id = ? limit ?,10";
+            connection.query(query, [id,limit1], function (err, rows) {
                 if (err) deferred.reject(err);
                 deferred.resolve(rows);
             });
             return deferred.promise;
         }
 
-        function getAllTable3Datas(id){
+        function getAllTable3Datas(id,page){
             var deferred = $q.defer();
-            var query = "SELECT * FROM table3 where id = ?";
-            connection.query(query, [id], function (err, rows) {
+            var limit1 = 10 * (page-1);
+            var query = "SELECT * FROM table3 where id = ? limit ?,10";
+            connection.query(query, [id,limit1], function (err, rows) {
                 if (err) deferred.reject(err);
                 deferred.resolve(rows);
             });
@@ -243,20 +256,22 @@
             return deferred.promise;
         }
 
-        function getDatas(city){
+        function getDatas(city,page){
             var deferred = $q.defer();
-            var query = "SELECT * FROM table1 where city = ?";
-            connection.query(query, [city], function (err, rows) {
+            var limit1 = 10 * (page-1);
+            var query = "SELECT * FROM table1 where city = ? limit ?,10";
+            connection.query(query, [city, limit1], function (err, rows) {
                 if (err) deferred.reject(err);
                 deferred.resolve(rows);
             });
             return deferred.promise;
         }
 
-        function gettable2Datas(id) {
+        function gettable2Datas(id,page) {
             var deferred = $q.defer();
-            var query = "SELECT * FROM table2 where id = ?";
-            connection.query(query, [id], function (err, rows) {
+            var limit1 = 10 * (page-1);
+            var query = "SELECT * FROM table2 where id = ? limit ?,10";
+            connection.query(query, [id, limit1], function (err, rows) {
                 if (err) deferred.reject(err);
                 deferred.resolve(rows);
             });

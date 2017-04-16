@@ -324,6 +324,7 @@
         </ul>
 
         <div>
+            <md-button ng-click="_ttrl.outputExcel()" class="md-raised md-info">outputExcels</md-button>
             <!--<button ng-click="_ttrl.changePrice()" class="btn btn-primary btn-large">  
                  更改价格  
             </button>-->
@@ -1105,7 +1106,7 @@
                     <input ng-model="_ttrl.Table1Head.year" type="text" style="width:30px;">年
                     <input ng-model="_ttrl.Table1Head.month" type="text" style="width:30px;">月
                     <input ng-model="_ttrl.Table1Head.day" type="text" style="width:30px;">日
-                    <label> 共    页    第    页</label>
+                    <label> 共 {{_ttrl.totalPages}}   页    第  {{_ttrl.currPage}}  页</label>
                 </div>
 
                 <div>
@@ -1158,12 +1159,12 @@
                             <td></td>
                             <td></td>
                             <td></td>
+                            <td>{{_ttrl.table1Total.area}}</td>
+                            <td>{{_ttrl.table1Total.land}}</td>
+                            <td>{{_ttrl.table1Total.nonland}}</td>
                             <td></td>
                             <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>{{_ttrl.table1Total.quantity}}</td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -1202,12 +1203,12 @@
                         </tr>
                     </table>
                     <md-button ng-click="_ttrl.saveTable1Data()" class="md-raised md-info">保存数据</md-button>
-                    <md-button ng-click="" class="md-raised md-info">导出excel</md-button>
+                    <md-button ng-click="_ttrl.outputExcel()" class="md-raised md-info">导出excel</md-button>
                     <div style="float: right">
-                        <md-button ng-click="" class="md-raised md-info">首页</md-button>
-                        <md-button ng-click="" class="md-raised md-info">上一页</md-button>
-                        <md-button ng-click="" class="md-raised md-info">下一页</md-button>
-                        <md-button ng-click="" class="md-raised md-info">末页</md-button>
+                        <md-button ng-click="_ttrl.getNextPage(0)" class="md-raised md-info">首页</md-button>
+                        <md-button ng-click="_ttrl.getNextPage(1)" class="md-raised md-info">上一页</md-button>
+                        <md-button ng-click="_ttrl.getNextPage(2)" class="md-raised md-info">下一页</md-button>
+                        <md-button ng-click="_ttrl.getNextPage(3)" class="md-raised md-info">末页</md-button>
                     </div>
                 </div>
 
