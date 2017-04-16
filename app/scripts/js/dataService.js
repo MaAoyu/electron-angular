@@ -105,8 +105,8 @@
         
         function updateTable1(data1) {
             var deferred = $q.defer();
-            var query = "UPDATE table1 SET name = ? WHERE autoID = ?";
-            connection.query(query, [data1.name, data1.autoID], function (err, res) {
+            var query = "UPDATE table1 SET ? WHERE autoID = "+data1.autoID;
+            connection.query(query, data1, function (err, res) {
                 if (err) deferred.reject(err);
                 deferred.resolve(res);
             });

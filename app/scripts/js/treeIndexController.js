@@ -100,7 +100,6 @@
                         alert("已经是第一页！");
                         page = 1;
                     }
-
                     else {
                         page = self.currPage - 1;
                         self.currPage = page;
@@ -417,6 +416,7 @@
 
             dataService.getDatas(self.cityName, page).then(function (datas) {
                 self.table1Datas = [].concat(datas);
+                self.table1Total = { "area": 0, "land": 0, "nonland": 0, "quantity": 0 };
                 for (let i = 0; i < self.table1Datas.length; i++) {
                     if (self.table1Datas[i].area != null) {
                         self.table1Total.area = self.table1Total.area + self.table1Datas[i].area;
@@ -448,6 +448,8 @@
                             .targetEvent($event)
                     );
                 });
+                self.curTable1 = {};
+                getAllTable1Datas(1);
             }
             else {
                 self.curTable1.city = self.cityName;
@@ -494,15 +496,15 @@
                 });
 
                 self.curTable1 = {};
-                getAllTable1Datas();
+                getAllTable1Datas(1);
                 //添加4-1表
-                self.curTable41.name = self.curTable1.name;
-                self.curTable41.type = self.curTable1.prj;
-                self.curTable41.unit = self.curTable1.unit;
-                self.curTable41.quantity = self.curTable1.quantity;
-                self.curTable41.city = self.curTable1.city;
-                dataService.addTable41(self.curTable41).then(function (affectedRows) {
-                });
+                // self.curTable41.name = self.curTable1.name;
+                // self.curTable41.type = self.curTable1.prj;
+                // self.curTable41.unit = self.curTable1.unit;
+                // self.curTable41.quantity = self.curTable1.quantity;
+                // self.curTable41.city = self.curTable1.city;
+                // dataService.addTable41(self.curTable41).then(function (affectedRows) {
+                // });
             }
 
         }
@@ -624,6 +626,8 @@
                 const cellLine = rowLine.addCell();
                 cellLine.value = lines[i];
                 cellLine.hMerge = 12;
+                if (i == 1)
+                    cellLine.style = style;
             }
 
             //多级表头
@@ -652,15 +656,16 @@
             for (let i = 9; i < 15; i++) {
                 const cell3 = row2.addCell();
                 cell3.value = table1Head[i];
-                cell3.style = style;
+                //cell3.style = style;
             }
             //表内容
-            var table1Content = ["name", "id"];
+            var table1Content = ["name","id","family","people","rail","type","area",
+            "land","nonland","prj","unit","quantity"];
             for (let i = 0; i < self.table1Datas.length; i++) {
                 const rowContent = sheet.addRow();
-                for (let i = 0; i < table1Content.length; i++) {
+                for (let j = 0; j < table1Content.length; j++) {
                     const cellContent = rowContent.addCell();
-                    cellContent.value = table1Content[i];
+                    cellContent.value = self.table1Datas[i][table1Content[j]];
                 }
             }
             //合计行
@@ -673,21 +678,38 @@
             }
             var totalLine = [];
             totalLine[0] = self.table1Total.area;
-            totalLine[1] = self.table1Total.area;
-            totalLine[2] = self.table1Total.area;
-            totalLine[3] = self.table1Total.area;
-            totalLine[4] = self.table1Total.area;
-            totalLine[5] = self.table1Total.area;
-            for (let i = 0; i < table1Content.length; i++) {
-                cellT1 = rowTotal.addCell();
-                cellT1.value = table1Content[i];
+            totalLine[1] = self.table1Total.land;
+            totalLine[2] = self.table1Total.nonland;
+            totalLine[3] = null;
+            totalLine[4] = null;
+            totalLine[5] = self.table1Total.quantity;
+            for (let i = 0; i < totalLine.length; i++) {
+                const cellT2 = rowTotal.addCell();
+                cellT2.value = totalLine[i];
             }
             //表尾
+            var tableOver = ["乡镇人民政府签字（公章）： ", "县（区）铁建办签字（公章）", "铁路建设业主单位签字（公章）：",
+                "设计单位签字（公章）：", "监理单位签字（公章）：", "铁路施工单位签字（公章）："];
+            for (let i = 0; i < 3; i++) {
+                const rowOver = sheet.addRow();
 
+                const cellOver = rowOver.addCell();
+                cellOver.value = tableOver[i * 2];
+                cellOver.hMerge = 6;
+
+                for (let i = 0; i < 6; i++) {
+                    rowOver.addCell();
+                }
+                const cellOver2 = rowOver.addCell();
+                cellOver2.value = tableOver[i * 2 + 1];
+                cellOver2.hMerge = 6;
+            }
+
+            var excelRoot = 'table/table1/' + self.cityName + self.currPage + '.xlsx';
 
             file
                 .saveAs()
-                .pipe(fs.createWriteStream('table/table1/test.xlsx'));
+                .pipe(fs.createWriteStream(excelRoot));
         }
     }
 
