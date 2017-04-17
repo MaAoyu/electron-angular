@@ -7,7 +7,7 @@
         host: "localhost",
         user: "root",
         password: "143555",
-        database: "table_manager"
+        database: "db"
     });
 
     angular.module('app')
@@ -40,10 +40,35 @@
             getTable3ByPK: getTable3ByPK,
             getTable4ByPK: getTable4ByPK,
             updateTable1: updateTable1,
-            updateTable2: updateTable2,
+            updateTable2: updateTable2,         //价格更新
+            updateTable2ByT1: updateTable2ByT1, //表一关联更新
             getPeopleByName: getPeopleByName,
-            getTable1Count: getTable1Count     //表一行数
+            getTable1Count: getTable1Count,     //表一行数
+            deleteTable1: deleteTable1,
+            deleteTable2: deleteTable2
         };
+
+        function deleteTable2(id) {
+            var deferred = $q.defer();
+            var query = "DELETE FROM table2 WHERE fID = ?";
+            connection.query(query, [id], function (err, res) {
+                if (err) deferred.reject(err);
+                //console.log(res);
+                deferred.resolve(res.affectedRows);
+            });
+            return deferred.promise;
+        }
+
+        function deleteTable1(id) {
+            var deferred = $q.defer();
+            var query = "DELETE FROM table1 WHERE autoID = ?";
+            connection.query(query, [id], function (err, res) {
+                if (err) deferred.reject(err);
+                //console.log(res);
+                deferred.resolve(res.affectedRows);
+            });
+            return deferred.promise;
+        }
 
         function getTable1Count() {
             var deferred = $q.defer();
@@ -103,6 +128,16 @@
         //     });
         //     return deferred.promise;
         // }
+
+        function updateTable2ByT1(id,prj,unit,quantity,fid) {
+            var deferred = $q.defer();
+            var query = "UPDATE table2 SET id = ?,prj=?,unit=?,quantity = ? WHERE fID = ?";
+            connection.query(query, [id,prj,unit,quantity,fid], function (err, res) {
+                if (err) deferred.reject(err);
+                deferred.resolve(res);
+            });
+            return deferred.promise;
+        }
 
         function updateTable2(prj,price) {
             var deferred = $q.defer();
@@ -331,9 +366,11 @@
 
         function addTable2(data) {
             var deferred = $q.defer();
+            //console.log(JSON.stringify(data));
             var query = "INSERT INTO table2 SET ?";
             connection.query(query, data, function (err, res) {
                 if (err) deferred.reject(err);
+                console.log(JSON.stringify(query));
                 deferred.resolve(res.insertId);
             });
             return deferred.promise;

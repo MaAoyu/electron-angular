@@ -40,6 +40,7 @@
         }; //价格参数
         self.current = null;   //当前户主
         self.curTable1 = null; //表一当前添加数据
+        self.autoID = 0;       //表一当前行数
         self.table1Datas = []; //表一所有数据
         self.table1Total = { "area": 0, "land": 0, "nonland": 0, "quantity": 0 }; //表一合计
         self.peopleLists = []; //所有户主的列表
@@ -176,8 +177,24 @@
             showTable2Data(self.searchName.id, self.currPage);
         }
 
-        function deleteTable1(pk) {
-
+        function deleteTable1(pk,$event) {
+            //console.log(pk);
+            var confirm = $mdDialog.confirm()
+                                   .title('Are you sure?')
+                                   .content('Are you sure want to delete this?')
+                                   .ok('Yes')
+                                   .cancel('No')
+                                   .targetEvent($event);
+            
+            
+            $mdDialog.show(confirm).then(function () {
+                dataService.deleteTable1(pk).then(function (affectedRows) {
+                    //重新加载表单
+                    getAllTable1Datas(1);//得到初始表一数据
+                });
+                dataService.deleteTable2(pk).then(function (affectedRows) {
+                });
+            }, function () { });
         }
 
         function getTable1ByPK(pk) {
@@ -468,6 +485,7 @@
 
         //添加表一数据
         function saveTable1Data($event) {
+            //更新
             if (self.curTable1 != null && self.curTable1.autoID != null) {
                 dataService.updateTable1(self.curTable1).then(function (affectedRows) {
                     $mdDialog.show(
@@ -480,14 +498,41 @@
                             .targetEvent($event)
                     );
                 });
+                dataService.updateTable2ByT1(self.curTable1.id, self.curTable1.prj,
+                    self.curTable1.unit, self.curTable1.quantity, self.curTable1.autoID).then(function (affectedRows) {
+                    });
                 self.curTable1 = {};
                 getAllTable1Datas(1);
             }
+            //添加
             else {
                 self.curTable1.city = self.cityName;
-                //console.log("self.curTable1:" + self.curTable1);
+                //添加表二，pID外键对应表一主键
+                var currTable2 = {};
+                currTable2.id = self.curTable1.id;
+                currTable2.prj = self.curTable1.prj;
+                currTable2.unit = self.curTable1.unit;
+                currTable2.quantity = self.curTable1.quantity;
+                //取到表一自增id
                 dataService.create(self.curTable1).then(function (affectedRows) {
                     //console.log("affectedRows:" + affectedRows);
+                    currTable2.fID = affectedRows;
+                    currTable2.price = 0;
+                    // currTable2.price = self.paras[self.curTable1.prj];
+                    // switch (self.curTable1.prj) {
+                    //     case "农作物":
+                    //         currTable2.price = self.paras.crop;
+                    //         break;
+                    //     case "农用设施":
+                    //         currTable2.price = self.paras.ss;
+                    //         break;
+                    //     default:
+                    //         currTable2.price = self.paras.tree;
+                    // }
+                    //TODO 价格先按每个人都不同处理
+                    dataService.addTable2(currTable2).then(function (affectedRows) {
+                    });
+
                     $mdDialog.show(
                         $mdDialog
                             .alert()
@@ -507,27 +552,7 @@
                 dataService.addTablePeople(people).then(function (affectedRows) {
                 });
 
-                //添加相应数据到表二
-                var currTable2 = {};
-                currTable2.id = self.curTable1.id;
-                currTable2.prj = self.curTable1.prj;
-                currTable2.unit = self.curTable1.unit;
-                currTable2.quantity = self.curTable1.quantity;
-                // currTable2.price = self.paras[self.curTable1.prj];
-                // switch (self.curTable1.prj) {
-                //     case "农作物":
-                //         currTable2.price = self.paras.crop;
-                //         break;
-                //     case "农用设施":
-                //         currTable2.price = self.paras.ss;
-                //         break;
-                //     default:
-                //         currTable2.price = self.paras.tree;
-                // }
-                //TODO 价格先按每个人都不同处理
-                currTable2.price = 0;
-                dataService.addTable2(currTable2).then(function (affectedRows) {
-                });
+
 
                 self.curTable1 = {};
                 getAllTable1Datas(1);
@@ -725,7 +750,7 @@
 
             //表内容
             var table2Content = ["prj", "unit", "quantity", "price", "total",
-            "prj2", "unit2", "quantity2", "price2", "total2"];
+                "prj2", "unit2", "quantity2", "price2", "total2"];
             for (let i = 0; i < self.table2Datas.length; i++) {
                 const rowContent = sheet.addRow();
                 for (let j = 0; j < table2Content.length; j++) {
@@ -747,7 +772,7 @@
             }
             cellT1 = rowTotal.addCell();
             cellT1.value = self.table2Total.total2;
-           
+
             //表尾
             var tableOver = ["乡镇人民政府（公章）： ", "被拆迁人（签字/章）：", "结算人（签字）：",
                 "审核人（签字）："];
