@@ -1406,10 +1406,10 @@
                     </table>
                     <md-button ng-click="_ttrl.saveTable3Data()" class="md-raised md-info">保存数据</md-button>
                     <div style="float: right">
-                        <md-button ng-click="" class="md-raised md-info">首页</md-button>
-                        <md-button ng-click="" class="md-raised md-info">上一页</md-button>
-                        <md-button ng-click="" class="md-raised md-info">下一页</md-button>
-                        <md-button ng-click="" class="md-raised md-info">末页</md-button>
+                        <md-button ng-click="_ttrl.getNextPage(0)" class="md-raised md-info">首页</md-button>
+                        <md-button ng-click="_ttrl.getNextPage(1)" class="md-raised md-info">上一页</md-button>
+                        <md-button ng-click="_ttrl.getNextPage(2)" class="md-raised md-info">下一页</md-button>
+                        <md-button ng-click="_ttrl.getNextPage(3)" class="md-raised md-info">末页</md-button>
                     </div>
                 </div>
 

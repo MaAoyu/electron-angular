@@ -123,7 +123,7 @@
                 default:
                     console.log("no datas..");
             }
-
+            console.log(page);
             switch (self.tableIndex) {
                 case '1':
                     getAllTable1Datas(page);//得到初始表一数据
@@ -177,16 +177,16 @@
             showTable2Data(self.searchName.id, self.currPage);
         }
 
-        function deleteTable1(pk,$event) {
+        function deleteTable1(pk, $event) {
             //console.log(pk);
             var confirm = $mdDialog.confirm()
-                                   .title('Are you sure?')
-                                   .content('Are you sure want to delete this?')
-                                   .ok('Yes')
-                                   .cancel('No')
-                                   .targetEvent($event);
-            
-            
+                .title('Are you sure?')
+                .content('Are you sure want to delete this?')
+                .ok('Yes')
+                .cancel('No')
+                .targetEvent($event);
+
+
             $mdDialog.show(confirm).then(function () {
                 dataService.deleteTable1(pk).then(function (affectedRows) {
                     //重新加载表单
@@ -330,71 +330,91 @@
 
         //添加表三数据
         function saveTable3Data($event) {
-            self.curTable3.id = self.current.id;
-            self.curTable3.city = self.cityName;
-            //console.log(self.curTable3.city);
-            dataService.createTable3(self.curTable3).then(function (affectedRows) {
-                $mdDialog.show(
-                    $mdDialog
-                        .alert()
-                        .clickOutsideToClose(true)
-                        .title('Success')
-                        .content('Data Added Successfully!')
-                        .ok('Ok')
-                        .targetEvent($event)
-                );
-            });
             //相应添加到表四
-            var currTable4 = {};
-            currTable4.id = self.curTable3.id;
-            currTable4.index = self.curTable3.index;
-            currTable4.type1 = self.curTable3.type2;
-            currTable4.area1 = self.curTable3.area;
-            switch (self.curTable3.type2) {
-                case "框架":
-                    currTable4.t1 = self.curTable3.area;
-                    currTable4.price = self.paras.b1;
-                    break;
-                case "砖混":
-                    currTable4.t2 = self.curTable3.area;
-                    currTable4.price = self.paras.b2;
-                    break;
-                case "砖木":
-                    currTable4.t3 = self.curTable3.area;
-                    currTable4.price = self.paras.b3;
-                    break;
-                case "土木":
-                    currTable4.t4 = self.curTable3.area;
-                    currTable4.price = self.paras.b4;
-                    break;
-                default:
-                    currTable4.t5 = self.paras.tree;
-                    currTable4.price = self.paras.b5;
+                var currTable4 = {};
+                currTable4.index = self.curTable3.index;
+                currTable4.type1 = self.curTable3.type2;
+                currTable4.area1 = self.curTable3.area;
+                switch (self.curTable3.type2) {
+                    case "框架":
+                        currTable4.t1 = self.curTable3.area;
+                        //currTable4.price = self.paras.b1;
+                        break;
+                    case "砖混":
+                        currTable4.t2 = self.curTable3.area;
+                        //currTable4.price = self.paras.b2;
+                        break;
+                    case "砖木":
+                        currTable4.t3 = self.curTable3.area;
+                        //currTable4.price = self.paras.b3;
+                        break;
+                    case "土木":
+                        currTable4.t4 = self.curTable3.area;
+                        //currTable4.price = self.paras.b4;
+                        break;
+                    default:
+                        currTable4.t5 = self.paras.tree;
+                    //currTable4.price = self.paras.b5;
+                }
+                switch (self.curTable3.prj) {
+                    case "院坝":
+                        currTable4.price2 = self.paras.a1;
+                        break;
+                    default:
+                        currTable4.price2 = self.paras.a2;
+                }
+                currTable4.arcName = self.curTable3.prj;
+                currTable4.unit = self.curTable3.unit;
+                currTable4.quantity = self.curTable3.quantity;
+            //更新
+            if (self.curTable3 != null && self.curTable3.autoID != null) {
+                dataService.updateTable3(self.curTable3).then(function (affectedRows) {
+                    $mdDialog.show(
+                        $mdDialog
+                            .alert()
+                            .clickOutsideToClose(true)
+                            .title('Success')
+                            .content('Data Updated Successfully!')
+                            .ok('Ok')
+                            .targetEvent($event)
+                    );
+                });
+                dataService.updateTable4ByT3(currTable4).then(function (affectedRows) {
+                    });
             }
-            switch (self.curTable3.prj) {
-                case "院坝":
-                    currTable4.price2 = self.paras.a1;
-                    break;
-                default:
-                    currTable4.price2 = self.paras.a2;
+            //添加
+            else {
+                self.curTable3.id = self.current.id;
+                self.curTable3.city = self.cityName;
+                
+                dataService.createTable3(self.curTable3).then(function (affectedRows) {
+                    currTable4.fID = affectedRows;
+                    dataService.createTable4(currTable4).then(function (affectedRows) {
+                    });
+                    $mdDialog.show(
+                        $mdDialog
+                            .alert()
+                            .clickOutsideToClose(true)
+                            .title('Success')
+                            .content('Data Added Successfully!')
+                            .ok('Ok')
+                            .targetEvent($event)
+                    );
+                });
             }
-            currTable4.arcName = self.curTable3.prj;
-            currTable4.unit = self.curTable3.unit;
-            currTable4.quantity = self.curTable3.quantity;
-            dataService.createTable4(currTable4).then(function (affectedRows) {
-            });
 
             self.curTable3 = {};
-            getAllTable3Datas(self.current.id);
+            getAllTable3Datas(self.current.id,1);
         }
 
         //得到表三全部数据
-        function getAllTable3Datas(id) {
+        function getAllTable3Datas(id, page) {
             dataService.getTable1ById(id).then(function (datas) {
                 self.current = datas[0];
             });//取表头信息
-            dataService.getAllTable3Datas(id).then(function (datas) {
+            dataService.getAllTable3Datas(id, page).then(function (datas) {
                 self.table3Datas = [].concat(datas);
+                //console.log("length:"+self.table3Datas.length);
             });//取表格信息
         }
 
@@ -456,8 +476,8 @@
 
         //得到表一全部数据
         function getAllTable1Datas(page) {
-            //console.log("get datas....");
             dataService.getTable1Count().then(function (affectedRows) {
+                //console.log(JSON.stringify(affectedRows));
                 //console.log("pages:" + Math.ceil(affectedRows[0]["count(*)"]/10));
                 self.totalPages = Math.ceil(affectedRows[0]["count(*)"] / 10);
 
@@ -599,7 +619,7 @@
             //console.log("self.citys3[index].flag:"+self.citys3[index].flag);
         }
         function selectItem(item) {    //第四层选择
-            console.log("cityName:" + item);
+            //console.log("cityName:" + item);
             self.cityName = item;
             self.cityLevel = '4';
         }
@@ -610,6 +630,12 @@
                     getAllTable1Datas(1);//得到初始表一数据
                     break;
                 case '2':
+                    getPeopleList();
+                    break;
+                case '3':
+                    getPeopleList();
+                    break;
+                case '4':
                     getPeopleList();
                     break;
                 case '11':

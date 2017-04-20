@@ -1,0 +1,151 @@
+
+* {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+html{
+    height: 100%;
+}
+
+body{
+    margin: 0;
+    height: 100%;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+.header{
+    background:-moz-linear-gradient(top, #a7c7e0, #5a9fd6);
+    background:-webkit-linear-gradient(top, #a7c7e0, #5a9fd6);
+    position:relative;
+    height: 60px;
+    width: 100%;
+    padding:0 120px;
+    line-height: 60px;
+    font-size:25px;
+    color: white;
+}
+.logo{
+    background-image: url("../images/logo.png");
+    display: inline-block;
+    margin: 0px 30px;
+    height: 40px;
+    width: 40px;
+    background-size: cover;
+    vertical-align: middle;
+}
+
+.container{
+    position: relative;
+    background-image: url("../images/login-bg1.png");
+    background-size: 100% 100%;
+    width: 100%;
+    height: 90%;
+    overflow-y: hidden;
+}
+
+.login-form{
+    width: 24%;
+    height: auto;
+    position: relative;
+    left: 55%;
+    top:20%;
+    background:-moz-linear-gradient(top, #e6f1f7, #a7c7e0);
+    background:-webkit-linear-gradient(top, #e6f1f7, #a7c7e0);
+    padding: 20px 30px;
+    outline: 10px solid rgba(255,255,255,0.5);
+}
+
+.login-form h1{
+    font-family: "Microsoft YaHei UI Light";
+    line-height: 25px;
+    font-size: 25px;
+    display: inline-block;
+}
+.login-form h2{
+    line-height: 15px;
+    font-size: 30px;
+    float: right;
+    display: inline-block;
+    color: #90c2dd;
+}
+.login-form label{
+    display: block;
+    font-size: medium;
+    color: dimgray;
+    line-height: 42px;
+}
+
+.login-form .input-account{
+    display: block;
+    padding: 0 10px;
+    height: 35px;
+    width: 100%;
+    border-radius: 5px;
+    border: 3px inset white;
+
+}
+
+.login-form .checkbox{
+    display: block;
+    height: 20px;
+    width: 20px;
+    border-radius: 5px;
+    border: 3px inset white;
+    display: inline-block;
+    vertical-align: middle;
+}
+.login-form .input-account :focus :active :hover{
+    -webkit-box-shadow:0 0 4px rgba(0, 204, 204, .8);
+    -moz-box-shadow:0 0 4px rgba(0, 204, 204, .8);
+    box-shadow:0 0 4px rgba(0, 204, 204, .8);
+}
+
+.login-form .rem{
+    float: right;
+    margin: 15px 0;
+    background-color: transparent;
+    border: none;
+    font-size: medium;
+    padding: 0;
+    color: dimgray;
+    display: inline-block;
+}
+.login-form .forget-button :focus{
+    outline:none;
+}
+.login-form .submit-button{
+    font-size: medium;
+    width: 100%;
+    height: 42px;
+    border-radius: 5px;
+    color: white;
+    background:-moz-linear-gradient(top, #90c2dd, #5389a7);
+    background:-webkit-linear-gradient(top, #90c2dd, #5389a7);
+    border: none;
+}
+.login-form :focus{
+    outline: none;
+}
+.footer{
+    background:-moz-linear-gradient(top, #90c2dd, #5389a7);
+    background:-webkit-linear-gradient(top, #90c2dd, #5389a7);
+    position:absolute;
+    bottom: 0;
+    height: 40px;
+    width: 100%;
+    line-height: 40px;
+    font-size:15px;
+    color: white;
+    text-align: center;
+
+}
+.footer.icon{
+    background-image: url("phone.png");
+    display: inline-block;
+    margin: 0px 10px;
+    height: 20px;
+    width: 20px;
+    vertical-align: middle;
+}

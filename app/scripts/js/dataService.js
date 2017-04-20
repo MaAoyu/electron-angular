@@ -42,6 +42,8 @@
             updateTable1: updateTable1,
             updateTable2: updateTable2,         //价格更新
             updateTable2ByT1: updateTable2ByT1, //表一关联更新
+            updateTable3: updateTable3,
+            updateTable4ByT3:updateTable4ByT3,  //表三关联更新
             getPeopleByName: getPeopleByName,
             getTable1Count: getTable1Count,     //表一行数
             deleteTable1: deleteTable1,
@@ -72,7 +74,7 @@
 
         function getTable1Count() {
             var deferred = $q.defer();
-            var query = "SELECT count(*) FROM table_manager.table1";
+            var query = "SELECT count(*) FROM table1";
             connection.query(query, function (err, res) {
                 if (err) deferred.reject(err);
                 deferred.resolve(res);
@@ -129,6 +131,17 @@
         //     return deferred.promise;
         // }
 
+        
+        function updateTable4ByT3(currTable4) {
+            var deferred = $q.defer();
+            var query = "UPDATE table4 SET ? WHERE fID =" + currTable4.fID;
+            connection.query(query, currTable4, function (err, res) {
+                if (err) deferred.reject(err);
+                deferred.resolve(res);
+            });
+            return deferred.promise;
+        }
+
         function updateTable2ByT1(id,prj,unit,quantity,fid) {
             var deferred = $q.defer();
             var query = "UPDATE table2 SET id = ?,prj=?,unit=?,quantity = ? WHERE fID = ?";
@@ -153,6 +166,16 @@
             var deferred = $q.defer();
             var query = "UPDATE table1 SET ? WHERE autoID = "+data1.autoID;
             connection.query(query, data1, function (err, res) {
+                if (err) deferred.reject(err);
+                deferred.resolve(res);
+            });
+            return deferred.promise;
+        }
+
+        function updateTable3(data3) {
+            var deferred = $q.defer();
+            var query = "UPDATE table3 SET ? WHERE autoID = "+data3.autoID;
+            connection.query(query, data3, function (err, res) {
                 if (err) deferred.reject(err);
                 deferred.resolve(res);
             });
@@ -370,7 +393,7 @@
             var query = "INSERT INTO table2 SET ?";
             connection.query(query, data, function (err, res) {
                 if (err) deferred.reject(err);
-                console.log(JSON.stringify(query));
+                //console.log(JSON.stringify(query));
                 deferred.resolve(res.insertId);
             });
             return deferred.promise;

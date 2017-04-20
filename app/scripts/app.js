@@ -12,6 +12,11 @@
     .config(['$routeProvider', function ($routeProvider) {
             $routeProvider
             .when('/', {
+                templateUrl: _templateBase + '/views/login.html' ,
+                // controller: 'treeIndexController',
+                // controllerAs: '_ttrl'
+            })
+            .when('/index', {
                 // templateUrl: _templateBase + '/customer/customer.html' ,
                 // controller: 'customerController',
                 // controllerAs: '_ctrl'
